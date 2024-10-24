@@ -1,0 +1,71 @@
+require 'json'
+require 'time'
+
+module OpenAISwarm
+  module Util
+    def self.debug_print(debug, *args)
+      return unless debug
+      timestamp = Time.now.strftime("%Y-%m-%d %H:%M:%S")
+      message = args.map(&:to_s).join(' ')
+      puts "\e[97m[\e[90m#{timestamp}\e[97m]\e[90m #{message}\e[0m"
+    end
+
+    def self.merge_fields(target, source)
+      source.each do |key, value|
+        if value.is_a?(String)
+          target[key] = target[key].to_s + value
+        elsif value && value.is_a?(Hash)
+          target[key] ||= {}
+          merge_fields(target[key], value)
+        end
+      end
+    end
+
+    def self.merge_chunk(final_response, delta)
+      delta.delete(:role)
+      merge_fields(final_response, delta)
+
+      if delta[:tool_calls]&.any?
+        index = delta[:tool_calls][0].delete(:index)
+        merge_fields(final_response[:tool_calls][index], delta[:tool_calls][0])
+      end
+    end
+
+    def self.function_to_json(func_instance)
+      func = func_instance.transfer_agent
+      type_map = {
+        String => "string",
+        Integer => "integer",
+        Float => "number",
+        TrueClass => "boolean",
+        FalseClass => "boolean",
+        Array => "array",
+        Hash => "object",
+        NilClass => "null"
+      }
+
+      parameters = {}
+      func.parameters.each do |param_type, param_name|
+        # In Ruby we don't have type annotations, so default to string
+        parameters[param_name] = { type: "string" }
+      end
+
+      required = func.parameters
+        .select { |type, _| [:req, :keyreq].include?(type) }
+        .map { |_, name| name.to_s }
+
+      {
+        type: "function",
+        function: {
+          name: func_instance.transfer_name,
+          description: func_instance.description,
+          parameters: {
+            type: "object",
+            properties: parameters,
+            required: required
+          }
+        }
+      }
+    end
+  end
+end
