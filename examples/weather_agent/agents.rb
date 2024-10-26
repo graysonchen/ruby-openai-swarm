@@ -8,7 +8,6 @@ client = OpenAISwarm.new
 
 # Client chat parameters: {:model=>"gpt-4", :messages=>[{:role=>"system", :content=>"You are a helpful agent."}, {"role"=>"user", "content"=>"Do I need an umbrella today? I'm in chicago."}, {"role"=>"assistant", "content"=>nil, "refusal"=>nil, "tool_calls"=>[{"index"=>0, "id"=>"call_spvHva4SFuDfTUk57EhuhArl", "type"=>"function", "function"=>{"name"=>"get_weather", "arguments"=>"{\n  \"location\": \"chicago\"\n}"}}], :sender=>"Weather Agent"}, {:role=>"tool", :tool_call_id=>"call_spvHva4SFuDfTUk57EhuhArl", :tool_name=>"get_weather", :content=>"{\"location\":{},\"temperature\":\"65\",\"time\":\"now\"}"}], :tools=>[{:type=>"function", :function=>{:name=>"send_email", :description=>"", :parameters=>{:type=>"object", :properties=>{:recipient=>{:type=>"string"}, :subject=>{:type=>"string"}, :body=>{:type=>"string"}}, :required=>["recipient", "subject", "body"]}}}, {:type=>"function", :function=>{:name=>"get_weather", :description=>"Get the current weather in a given location. Location MUST be a city.", :parameters=>{:type=>"object", :properties=>{:location=>{:type=>"string"}, :time=>{:type=>"string"}}, :required=>["location"]}}}], :stream=>false, :parallel_tool_calls=>true}
 def get_weather(location, time= Time.now)
-  # Get the current weather in a given location. Location MUST be a city.
   { location: location, temperature: "65", time: time }.to_json
 end
 
@@ -20,14 +19,12 @@ def send_email(recipient, subject, body)
   puts "Sent!"
 end
 
-function_instance_send_email = OpenAISwarm::Transfer.new(
-  transfer_agent: Proc.new { |recipient, subject, body| send_email(recipient, subject, body) },
-  transfer_name: 'send_email',
+function_instance_send_email = OpenAISwarm::FunctionDescriptor.new(
+  target_method: :send_email
 )
 
-function_instance_get_weather = OpenAISwarm::Transfer.new(
-  transfer_agent: Proc.new { |location, time| get_weather(location, time="now") },
-  transfer_name: 'get_weather',
+function_instance_get_weather = OpenAISwarm::FunctionDescriptor.new(
+  target_method: :get_weather,
   description: 'Get the current weather in a given location. Location MUST be a city.'
 )
 
@@ -52,7 +49,6 @@ response = client.run(
   debug: true,
 )
 # print(response.messages[-1]["content"])
-
 
 response = client.run(
   messages: [{"role" => "user", "content" => "What is the time right now?",}],

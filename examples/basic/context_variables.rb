@@ -58,6 +58,7 @@ response = client.run(
 )
 msg = response.messages.last
 msg['content']
+response.context_variables == {:name=>"James", :user_id=>123}
 
 # print(response.messages[-1]["content"])
 # Hello, James! Your account details have been printed successfully. If you need anything else, just let me know!
