@@ -24,8 +24,8 @@ module OpenAISwarm
       # hide context_variables from model
       tools.each do |tool|
         params = tool[:function][:parameters]
-        params[:properties].delete(CTX_VARS_NAME)
-        params[:required]&.delete(CTX_VARS_NAME)
+        params[:properties].delete(CTX_VARS_NAME.to_sym)
+        params[:required]&.delete(CTX_VARS_NAME.to_sym)
       end
 
       create_params = {

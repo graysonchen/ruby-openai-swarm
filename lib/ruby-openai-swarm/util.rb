@@ -47,9 +47,13 @@ module OpenAISwarm
         NilClass => "null"
       }
       parameters = {}
-      function_parameters.each do |param_type, param_name|
-        # In Ruby we don't have type annotations, so default to string
-        parameters[param_name] = { type: "string" }
+
+      function_parameters.each do |type, param_name|
+        param_type = type_map[param_name.class] || "string"
+        if param_name.to_s == 'context_variables' && type == :opt #type == :keyreq
+          param_type = 'object'
+        end
+        parameters[param_name] = { type: param_type }
       end
 
       required = function_parameters

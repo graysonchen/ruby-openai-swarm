@@ -36,6 +36,7 @@ agent = OpenAISwarm::Agent.new(
 
 context_variables = { 'name': 'James', 'user_id': 123 }
 
+# debugger logger: {:model=>"gpt-4o-mini", :messages=>[{:role=>"system", :content=>"You are a helpful agent. Greet the user by name (James)."}, {:role=>"user", :content=>"Hi!"}], :tools=>[{:type=>"function", :function=>{:name=>"print_account_details", :description=>"", :parameters=>{:type=>"object", :properties=>{}, :required=>[]}}}], :stream=>false, :parallel_tool_calls=>true}
 response = client.run(
   messages: [{"role": "user", "content": "Hi!"}],
   agent: agent,
@@ -45,3 +46,14 @@ response = client.run(
 
 # print(response.messages[-1]["content"])
 # Hello, James! How can I assist you today? => nil
+
+# debugger logger: {:model=>"gpt-4o-mini", :messages=>[{:role=>"system", :content=>"You are a helpful agent. Greet the user by name (James)."}, {:role=>"user", :content=>"Print my account details!"}], :tools=>[{:type=>"function", :function=>{:name=>"print_account_details", :description=>"", :parameters=>{:type=>"object", :properties=>{}, :required=>[]}}}], :stream=>false, :parallel_tool_calls=>true
+response = client.run(
+  messages: [{"role": "user", "content": "Print my account details!"}],
+  agent: agent,
+  context_variables: context_variables,
+  debug: true,
+)
+
+# print(response.messages[-1]["content"])
+# Hello, James! Your account details have been printed successfully. If you need anything else, just let me know!
