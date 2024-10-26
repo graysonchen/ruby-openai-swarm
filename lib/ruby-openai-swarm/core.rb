@@ -15,8 +15,8 @@ module OpenAISwarm
     end
 
     def get_chat_completion(agent, history, context_variables, model_override, stream, debug)
-      context_variables = Hash.new('').merge(context_variables)
-      instructions = agent.instructions.is_a?(Proc) ? agent.instructions.call(context_variables) : agent.instructions
+      context_variables = context_variables.dup
+      instructions = agent.instructions.respond_to?(:call) ? agent.instructions.call(context_variables) : agent.instructions
       messages = [{ role: 'system', content: instructions }] + history
       Util.debug_print(debug, "Getting chat completion for...:", messages)
 
@@ -42,6 +42,7 @@ module OpenAISwarm
       create_params[:tool_choice] = agent.tool_choice if agent.tool_choice
       create_params[:parallel_tool_calls] = agent.parallel_tool_calls if tools.any?
 
+      Util.debug_print(debug, "Client chat parameters:", create_params)
       response = @client.chat(parameters: create_params)
       Util.debug_print(debug, "API Response:", response)
       response
