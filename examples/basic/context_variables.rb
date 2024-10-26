@@ -3,9 +3,8 @@
 # OpenAI.configure do |config|
 #   config.access_token = ENV['OPENAI_ACCESS_TOKEN']
 # end
-
 OpenAI.configure do |config|
-  config.access_token = ENV['OPENAI_ACCESS_TOKEN']
+  config.access_token = ENV['OPEN_ROUTER_ACCESS_TOKEN']
   config.uri_base = "https://openrouter.ai/api/v1"
 end
 
@@ -44,4 +43,5 @@ response = client.run(
   debug: true,
 )
 
-#print(response.messages[-1]["content"])
+# print(response.messages[-1]["content"])
+# Hello, James! How can I assist you today? => nil
