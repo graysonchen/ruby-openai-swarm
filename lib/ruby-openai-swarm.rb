@@ -4,7 +4,7 @@ require 'ruby-openai-swarm/response'
 require 'ruby-openai-swarm/result'
 require 'ruby-openai-swarm/util'
 require 'ruby-openai-swarm/core'
-require 'ruby-openai-swarm/transfer'
+require 'ruby-openai-swarm/function_descriptor'
 
 module OpenAISwarm
   class Error < StandardError; end

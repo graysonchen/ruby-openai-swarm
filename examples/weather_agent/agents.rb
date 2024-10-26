@@ -17,7 +17,7 @@ def send_email(recipient, subject, body)
   puts "To: #{recipient}"
   puts "Subject: #{subject}"
   puts "Body: #{body}"
-  "Sent!"
+  puts "Sent!"
 end
 
 function_instance_send_email = OpenAISwarm::Transfer.new(
@@ -34,6 +34,7 @@ function_instance_get_weather = OpenAISwarm::Transfer.new(
 weather_agent = OpenAISwarm::Agent.new(
   name: "Weather Agent",
   instructions: "You are a helpful agent.",
+  model: "gpt-4o-mini",
   functions: [
     function_instance_send_email,
     function_instance_get_weather

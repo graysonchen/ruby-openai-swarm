@@ -73,8 +73,15 @@ module OpenAISwarm
 
     def handle_tool_calls(tool_calls, active_agent, context_variables, debug)
       functions = active_agent.functions
-      # function_map = functions.map { |f| [f.name, f] }.to_h
-      function_map = functions.map { |f| [f.transfer_name, f.transfer_agent] }.to_h
+
+      function_map = functions.map do |f|
+        if f.is_a?(OpenAISwarm::FunctionDescriptor)
+          [f.target_method.name, f.target_method]
+        else
+          [f.name, f]
+        end
+      end.to_h.transform_keys(&:to_s)
+
       partial_response = Response.new(
         messages: [],
         agent: nil,
@@ -101,7 +108,7 @@ module OpenAISwarm
         # pass context_variables to agent functions
         args[CTX_VARS_NAME] = context_variables if func&.parameters.include?(CTX_VARS_NAME)
 
-        arguments = JSON.parse("{}").transform_keys(&:to_sym)
+        arguments = JSON.parse(args).transform_keys(&:to_sym)
 
         raw_result = func.call(arguments)
         result = handle_function_result(raw_result, debug)
