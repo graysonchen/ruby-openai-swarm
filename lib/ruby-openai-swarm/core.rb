@@ -101,16 +101,16 @@ module OpenAISwarm
           next
         end
 
-        args = tool_call.dig('function', 'arguments')
+        args = JSON.parse(tool_call.dig('function', 'arguments') || '{}')
         Util.debug_print(debug, "Processing tool call: #{name} with arguments #{args}")
 
         func = function_map[name]
         # pass context_variables to agent functions
-        args[CTX_VARS_NAME] = context_variables if func&.parameters.include?(CTX_VARS_NAME)
+        args[CTX_VARS_NAME] = context_variables if func.parameters.map(&:last).include?(CTX_VARS_NAME.to_sym)
+        is_parameters = func.parameters.any?
+        arguments = args.transform_keys(&:to_sym)
 
-        arguments = JSON.parse(args).transform_keys(&:to_sym)
-
-        raw_result = func.call(arguments)
+        raw_result = is_parameters ? func.call(**arguments) : func.call
         result = handle_function_result(raw_result, debug)
 
         partial_response.messages << {
