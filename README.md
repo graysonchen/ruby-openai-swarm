@@ -10,8 +10,8 @@ Add this line to your application's Gemfile:
 
 ```
 OpenAI.configure do |config|
-  config.access_token = ENV['OPENAI_ACCESS_TOKEN']
-  # config.uri_base: "https://openrouter.ai/api/v1" #
+  config.access_token = ENV['OPEN_ROUTER_ACCESS_TOKEN']
+  # config.uri_base = "https://openrouter.ai/api/v1" #
 end
 ```
 

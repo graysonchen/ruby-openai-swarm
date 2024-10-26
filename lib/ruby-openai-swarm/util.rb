@@ -33,6 +33,9 @@ module OpenAISwarm
 
     def self.function_to_json(func_instance)
       func = func_instance.transfer_agent
+      function_name = func_instance.transfer_name
+      function_parameters = func.call.method(function_name).parameters
+
       type_map = {
         String => "string",
         Integer => "integer",
@@ -43,21 +46,24 @@ module OpenAISwarm
         Hash => "object",
         NilClass => "null"
       }
-
       parameters = {}
-      func.parameters.each do |param_type, param_name|
-        # In Ruby we don't have type annotations, so default to string
-        parameters[param_name] = { type: "string" }
+
+      function_parameters.each do |type, param_name|
+        param_type = type_map[param_name.class] || "string"
+        if param_name.to_s == 'context_variables' && type == :opt #type == :keyreq
+          param_type = 'object'
+        end
+        parameters[param_name] = { type: param_type }
       end
 
-      required = func.parameters
+      required = function_parameters
         .select { |type, _| [:req, :keyreq].include?(type) }
         .map { |_, name| name.to_s }
 
       {
         type: "function",
         function: {
-          name: func_instance.transfer_name,
+          name: function_name,
           description: func_instance.description,
           parameters: {
             type: "object",
