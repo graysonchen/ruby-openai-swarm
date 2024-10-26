@@ -32,9 +32,11 @@ module OpenAISwarm
     end
 
     def self.function_to_json(func_instance)
-      func = func_instance.transfer_agent
-      function_name = func_instance.transfer_name
-      function_parameters = func.call.method(function_name).parameters
+      is_target_method = func_instance.respond_to?(:target_method) || func_instance.is_a?(OpenAISwarm::FunctionDescriptor)
+      func = is_target_method ? func_instance.target_method : func_instance
+
+      function_name = func.name
+      function_parameters = func.parameters
 
       type_map = {
         String => "string",
@@ -64,7 +66,7 @@ module OpenAISwarm
         type: "function",
         function: {
           name: function_name,
-          description: func_instance.description,
+          description: func_instance&.description || "",
           parameters: {
             type: "object",
             properties: parameters,

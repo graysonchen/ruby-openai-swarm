@@ -3,43 +3,43 @@ require 'ruby-openai-swarm/util'
 
 RSpec.describe OpenAISwarm::Util do
   describe '.function_to_json' do
-    let(:func_instance) do
-      double('FunctionInstance',
-        transfer_agent: double('TransferAgent'),
-        transfer_name: 'test_function',
-        description: 'A test function'
+    let(:mock_method) do
+      instance_double(Method,
+        name: 'test_function',
+        parameters: [[:req, :param1], [:opt, :param2], [:keyreq, :param3]]
       )
     end
 
-    let(:transfer_agent) { func_instance.transfer_agent }
-
-    before do
-      allow(transfer_agent).to receive(:call).and_return(transfer_agent)
-      allow(transfer_agent).to receive(:method).with('test_function').and_return(
-        double('Method', parameters: [[:req, :param1], [:opt, :param2]])
+    let(:mock_function) do
+      instance_double('Function',
+        target_method: mock_method,
+        description: 'This is a test function'
       )
     end
+
+    subject(:result) { described_class.function_to_json(mock_function) }
 
     it 'returns a hash with the correct structure' do
-      result = described_class.function_to_json(func_instance)
-
       expect(result).to be_a(Hash)
       expect(result[:type]).to eq('function')
-      expect(result[:function]).to be_a(Hash)
-      expect(result[:function][:name]).to eq('test_function')
-      expect(result[:function][:description]).to eq('A test function')
-      expect(result[:function][:parameters]).to be_a(Hash)
     end
 
-    it 'correctly sets up the parameters' do
-      result = described_class.function_to_json(func_instance)
+    it 'includes the correct function name and description' do
+      expect(result[:function][:name]).to eq('test_function')
+      expect(result[:function][:description]).to eq('This is a test function')
+    end
 
-      expect(result[:function][:parameters][:type]).to eq('object')
-      expect(result[:function][:parameters][:properties]).to eq({
-        param1: { type: 'string' },
-        param2: { type: 'string' }
-      })
-      expect(result[:function][:parameters][:required]).to eq(['param1'])
+    it 'correctly structures the parameters' do
+      parameters = result[:function][:parameters]
+      expect(parameters[:type]).to eq('object')
+      expect(parameters[:required]).to contain_exactly('param1', 'param3')
+    end
+
+    it 'sets the correct type for each parameter' do
+      properties = result[:function][:parameters][:properties]
+      expect(properties[:param1][:type]).to eq('string')
+      expect(properties[:param2][:type]).to eq('string')
+      expect(properties[:param3][:type]).to eq('string')
     end
   end
 end

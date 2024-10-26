@@ -7,21 +7,12 @@ end
 client = OpenAISwarm.new
 
 def get_weather(location:)
-  # Simulate fetching weather data
   "{'temp':67, 'unit':'F'}"
 end
 
-# func =  Proc.new { get_weather }
-# func.call.method(:get_weather).parameters
-# => ArgumentError (missing keyword: :location)
-
-# func = Proc.new { |location| get_weather(location: location) }
-# func.call.method(:get_weather).parameters
-
-function_instance = OpenAISwarm::Transfer.new(
-  transfer_agent: Proc.new { |location| get_weather(location: location) },
-  transfer_name: 'get_weather',
-  description: ''
+function_instance = OpenAISwarm::FunctionDescriptor.new(
+  target_method: :get_weather,
+  description: 'Simulate fetching weather data'
 )
 
 agent = OpenAISwarm::Agent.new(

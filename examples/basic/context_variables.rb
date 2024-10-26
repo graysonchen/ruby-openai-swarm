@@ -15,16 +15,17 @@ def instructions(context_variables)
   "You are a helpful agent. Greet the user by name (#{name})."
 end
 
-def print_account_details(context_variables = {})
+def print_account_details(context_variables: {})
+  puts "print_account_details context_variables: #{context_variables.inspect}"
+
   user_id = context_variables[:user_id]
   name = context_variables[:name]
-  puts "Account Details: #{name} #{user_id}"
+  puts "Account Details: name: #{name}, user_id: #{user_id}"
   "Success"
 end
 
-function_instance = OpenAISwarm::Transfer.new(
-  transfer_agent: print_account_details,
-  transfer_name: 'print_account_details'
+function_instance = OpenAISwarm::FunctionDescriptor.new(
+  target_method: :print_account_details,
 )
 
 agent = OpenAISwarm::Agent.new(
@@ -43,9 +44,10 @@ response = client.run(
   context_variables: context_variables,
   debug: true,
 )
+msg = response.messages.last
+# Hello, James! How can I assist you today?
 
-# print(response.messages[-1]["content"])
-# Hello, James! How can I assist you today? => nil
+msg['content'].include?('James')
 
 # debugger logger: {:model=>"gpt-4o-mini", :messages=>[{:role=>"system", :content=>"You are a helpful agent. Greet the user by name (James)."}, {:role=>"user", :content=>"Print my account details!"}], :tools=>[{:type=>"function", :function=>{:name=>"print_account_details", :description=>"", :parameters=>{:type=>"object", :properties=>{}, :required=>[]}}}], :stream=>false, :parallel_tool_calls=>true
 response = client.run(
@@ -54,6 +56,12 @@ response = client.run(
   context_variables: context_variables,
   debug: true,
 )
+msg = response.messages.last
+msg['content']
+response.context_variables == {:name=>"James", :user_id=>123}
 
 # print(response.messages[-1]["content"])
 # Hello, James! Your account details have been printed successfully. If you need anything else, just let me know!
+#
+# print_account_details context_variables: {:name=>"James", :user_id=>123}
+# Account Details: name: James, user_id: 123
