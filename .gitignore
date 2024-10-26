@@ -27,3 +27,6 @@ build-iPhoneSimulator/
 .ruby-version
 .ruby-gemset
 /tmp
+
+# rspec failure tracking
+.rspec_status
