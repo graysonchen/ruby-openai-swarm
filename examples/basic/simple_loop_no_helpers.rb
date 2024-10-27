@@ -1,8 +1,4 @@
-
-OpenAI.configure do |config|
-  config.access_token = ENV['OPEN_ROUTER_ACCESS_TOKEN']
-  config.uri_base = "https://openrouter.ai/api/v1"
-end
+require_relative "../bootstrap"
 
 client = OpenAISwarm.new
 
@@ -20,7 +16,6 @@ def pretty_print_messages(messages)
 end
 
 messages = []
-agent = my_agent
 loop do
   print "> "
   user_input = gets.chomp

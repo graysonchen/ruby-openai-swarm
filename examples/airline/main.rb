@@ -1,6 +1,4 @@
 # https://github.com/openai/swarm/blob/main/examples/airline/main.py
-require "bundler/setup"
-require "ruby-openai-swarm"
 require_relative "../bootstrap"
 require_relative "configs/agents"
 require_relative "configs/tools"

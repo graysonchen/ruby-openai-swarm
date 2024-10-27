@@ -1,8 +1,4 @@
-
-OpenAI.configure do |config|
-  config.access_token = ENV['OPEN_ROUTER_ACCESS_TOKEN']
-  config.uri_base = "https://openrouter.ai/api/v1"
-end
+require_relative "../bootstrap"
 
 client = OpenAISwarm.new
 
@@ -27,6 +23,8 @@ response = client.run(
   agent: agent,
   debug: true,
 )
+
+pp response.messages.last
 
 # print(response.messages[-1]["content"])
 # The current temperature in New York City is 67°F. => nil
