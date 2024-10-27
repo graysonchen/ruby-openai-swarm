@@ -62,11 +62,13 @@ module OpenAISwarm
         .select { |type, _| [:req, :keyreq].include?(type) }
         .map { |_, name| name.to_s }
 
+      description = func_instance.respond_to?(:description) ? func_instance&.description : nil
+
       {
         type: "function",
         function: {
           name: function_name,
-          description: func_instance&.description || "",
+          description: description || '',
           parameters: {
             type: "object",
             properties: parameters,
