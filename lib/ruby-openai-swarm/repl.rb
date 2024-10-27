@@ -63,7 +63,7 @@ module OpenAISwarm
         loop do
           print "\033[90mUser\033[0m: "
           user_input = gets.chomp
-          break if user_input.downcase == "exit"
+          break if %W[exit exit! exit() quit quit()].include?(user_input.downcase)
 
           messages << { "role" => "user", "content" => user_input }
 
