@@ -1,3 +1,5 @@
+require "bundler/setup"
+require "ruby-openai-swarm"
 
 def env_debug
   !!ENV['DEBUG']

@@ -1,8 +1,4 @@
-
-OpenAI.configure do |config|
-  config.access_token = ENV['OPEN_ROUTER_ACCESS_TOKEN']
-  config.uri_base = "https://openrouter.ai/api/v1"
-end
+require_relative "../bootstrap"
 
 client = OpenAISwarm.new
 
