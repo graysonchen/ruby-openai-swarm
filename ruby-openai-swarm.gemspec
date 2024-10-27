@@ -17,12 +17,20 @@ Gem::Specification.new do |spec|
   spec.metadata["changelog_uri"] = "#{spec.homepage}/blob/main/CHANGELOG.md"
 
   spec.files = Dir.chdir(File.expand_path(__dir__)) do
-    `git ls-files -z`.split("\x0").reject { |f| f.match(%r{\A(?:test|spec|features)/}) }
+    `git ls-files -z`.split("\x0").reject do |f|
+      (f.match(%r{\A(?:test|spec|features)/}) ||
+       f.match(%r{\A\.}) ||
+       f.match(%r{^bin/}))
+    end
   end
+  spec.files += Dir['exe/*'] 
 
   spec.require_paths = ["lib"]
   spec.add_dependency "ruby-openai", "~> 7.3"
   spec.add_development_dependency "rspec", "~> 3.0"
   spec.add_development_dependency "rake", "~> 13.0"
   spec.add_development_dependency "pry"
+
+  spec.bindir = "exe"
+  spec.executables = ["ruby-openai-swarm"]
 end
