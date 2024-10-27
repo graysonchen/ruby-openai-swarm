@@ -6,7 +6,9 @@ OpenAI.configure do |config|
   config.uri_base = "https://openrouter.ai/api/v1"
 end
 
-client = OpenAISwarm.new
+def client
+  OpenAISwarm.new
+end
 
 def process_refund(item_id, reason = "NOT SPECIFIED")
   # Refund an item. Make sure you have the item_id of the form item_...

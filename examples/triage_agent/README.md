@@ -17,3 +17,18 @@ or
 ```shell
 ruby examples/triage_agent/main.rb
 ```
+
+## Evals (TODO)
+
+> [!NOTE]
+> These evals are intended to be examples to demonstrate functionality, but will have to be updated and catered to your particular use case.
+
+This example uses `Pytest` to run eval unit tests. We have two tests in the `evals.py` file, one which
+tests if we call the correct triage function when expected, and one which assesses if a conversation
+is 'successful', as defined in our prompt in `evals.py`.
+
+To run the evals, run
+
+```shell
+ruby evals.rb
+```

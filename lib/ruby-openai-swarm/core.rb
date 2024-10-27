@@ -157,7 +157,7 @@ module OpenAISwarm
         message = completion.dig('choices', 0, 'message')
         Util.debug_print(debug, "Received completion:", message)
 
-        message[:sender] = active_agent.name
+        message['sender'] = active_agent.name
         history << message
 
         break if !message['tool_calls'] || !execute_tools

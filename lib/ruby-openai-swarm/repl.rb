@@ -5,7 +5,7 @@ module OpenAISwarm
         content = ""
         last_sender = ""
         response.each do |chunk|
-          last_sender = chunk["sender"] if chunk.key?("sender")
+          last_sender = chunk['sender'] if chunk.key?('sender')
 
           if chunk.key?("content") && !chunk["content"].nil?
             if content.empty? && !last_sender.empty?
@@ -38,18 +38,17 @@ module OpenAISwarm
         messages.each do |message|
           next unless message["role"] == "assistant"
 
-          print "\033[94m#{message['sender']}\033[0m: "
+          print "\033[94m#{message[:sender]}\033[0m: "
 
           puts message["content"] if message["content"]
 
           tool_calls = message.fetch("tool_calls", [])
           puts if tool_calls.length > 1
-
           tool_calls.each do |tool_call|
-            f = tool_call["function"]
-            name, args = f["name"], f["arguments"]
-            arg_str = JSON.pretty_generate(JSON.parse(args)).gsub(':', '=')
-            print "\033[95m#{name}\033[0m(#{arg_str[1...-1]})"
+            func = tool_call["function"]
+            name = func["name"]
+            args = JSON.parse(func["arguments"] || "{}").map { |k, v| "#{k}=#{v}" }.join(", ")
+            puts "\e[95m#{name}\e[0m(#{args})"
           end
         end
       end
