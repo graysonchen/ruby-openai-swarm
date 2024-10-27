@@ -59,11 +59,14 @@ function:(transfer_to_flight_cancel)
 User: I dont want this flight
 function:(None)
 
+params:
+  `DEBUG=1 ruby examples/airline/main.rb` # turn on debug (default turn off)
 ################################################################
 
 
 GUIDE_EXAMPLES
-
 puts guide_examples
 
-OpenAISwarm::Repl.run_demo_loop(triage_agent, context_variables: context_variables)
+env_debug = !!ENV['DEBUG']
+
+OpenAISwarm::Repl.run_demo_loop(triage_agent, context_variables: context_variables, debug: env_debug)
