@@ -38,4 +38,4 @@ p response.messages.last
 # => {"role"=>"assistant", "content"=>"¡Hola! Estoy bien, gracias. ¿Y tú?", "refusal"=>nil, :sender=>"Spanish Agent"}
 
 msg = response.messages.last
-msg[:sender] == "Spanish Agent"
+msg['sender'] == "Spanish Agent"

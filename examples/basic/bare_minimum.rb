@@ -1,7 +1,15 @@
+require "bundler/setup"
+require "ruby-openai-swarm"
+
 # link: https://github.com/openai/swarm/blob/main/examples/basic/bare_minimum.py
 
+# OpenAI.configure do |config|
+#   config.access_token = ENV['OPENAI_ACCESS_TOKEN']
+# end
+
 OpenAI.configure do |config|
-  config.access_token = ENV['OPENAI_ACCESS_TOKEN']
+  config.access_token = ENV['OPEN_ROUTER_ACCESS_TOKEN']
+  config.uri_base = "https://openrouter.ai/api/v1"
 end
 
 client = OpenAISwarm.new
