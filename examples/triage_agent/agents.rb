@@ -80,5 +80,3 @@ end
 triage_agent.functions = [method(:transfer_to_sales), method(:transfer_to_refunds)]
 sales_agent.functions << transfer_back_to_triage
 refunds_agent.functions << transfer_back_to_triage
-
-OpenAISwarm::Repl.run_demo_loop(triage_agent)
