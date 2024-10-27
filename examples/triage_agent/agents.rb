@@ -81,10 +81,4 @@ triage_agent.functions = [method(:transfer_to_sales), method(:transfer_to_refund
 sales_agent.functions << transfer_back_to_triage
 refunds_agent.functions << transfer_back_to_triage
 
-user_input = 'I want to make a refund!'
-messages = [{ "role": "user", "content": user_input }]
-
-response = client.run(agent: triage_agent, messages: messages, debug: true)
-
-p response.messages.last["content"]
-# binding.pry
+OpenAISwarm::Repl.run_demo_loop(triage_agent)

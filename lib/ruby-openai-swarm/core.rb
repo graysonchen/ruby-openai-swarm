@@ -1,5 +1,4 @@
 require 'ruby/openai'
-require 'json'
 begin
   require 'pry'
 rescue LoadError
