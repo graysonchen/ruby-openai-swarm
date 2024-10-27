@@ -27,4 +27,43 @@ context_variables = {
   FLIGHT_CONTEXT
 }
 
-OpenAISwarm::Repl.run_demo_loop(triage_agent, context_variables: context_variables, debug: true)
+guide_examples = <<~GUIDE_EXAMPLES
+############# TRIAGE_CASES #####################################
+1. Conversation:
+User: My bag was not delivered!
+function:(transfer_to_lost_baggage) - Transferring to Lost Baggage Department...
+
+2. Conversation:
+User: I had some turbulence on my flight
+function:(None) - No action required for this conversation.
+
+3. Conversation:
+User: I want to cancel my flight please
+function:(transfer_to_flight_modification) Transferring to Flight Modification Department...
+
+4. Conversation:
+User: What is the meaning of life
+function:(None) No action required for this conversation.
+################################################################
+
+############# FLIGHT_MODIFICATION_CASES ########################
+1. Conversation:
+User: I want to change my flight to one day earlier!
+function:(transfer_to_flight_change)
+
+2. Conversation:
+User: I want to cancel my flight. I can't make it anymore due to a personal conflict
+function:(transfer_to_flight_cancel)
+
+3. Conversation:
+User: I dont want this flight
+function:(None)
+
+################################################################
+
+
+GUIDE_EXAMPLES
+
+puts guide_examples
+
+OpenAISwarm::Repl.run_demo_loop(triage_agent, context_variables: context_variables)

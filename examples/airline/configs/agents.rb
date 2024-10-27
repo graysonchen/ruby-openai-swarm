@@ -1,5 +1,11 @@
-client = OpenAISwarm.new
+OpenAI.configure do |config|
+  config.access_token = ENV['OPEN_ROUTER_ACCESS_TOKEN']
+  config.uri_base = "https://openrouter.ai/api/v1"
+end
 
+def client
+  OpenAISwarm.new
+end
 # Define functions for transferring to different agents
 def transfer_to_flight_modification
   flight_modification
