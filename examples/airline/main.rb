@@ -1,7 +1,7 @@
 # https://github.com/openai/swarm/blob/main/examples/airline/main.py
 require "bundler/setup"
 require "ruby-openai-swarm"
-
+require_relative "../bootstrap"
 require_relative "configs/agents"
 require_relative "configs/tools"
 require_relative "data/prompts"
@@ -66,7 +66,5 @@ params:
 
 GUIDE_EXAMPLES
 puts guide_examples
-
-env_debug = !!ENV['DEBUG']
 
 OpenAISwarm::Repl.run_demo_loop(triage_agent, context_variables: context_variables, debug: env_debug)

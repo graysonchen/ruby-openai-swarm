@@ -112,12 +112,23 @@ pp response.messages.last
 
 # Examples
 
+Setting ACCESS_TOKEN for AI Providers in examples
+
+- For OpenRouter:
+
+  `OPEN_ROUTER_ACCESS_TOKEN=cxxxxx` or `export OPEN_ROUTER_ACCESS_TOKEN=cxxxxx`
+
+- For OpenAI:
+
+  `OPENAI_ACCESS_TOKEN=cxxxxx` or `export OPENAI_ACCESS_TOKEN=cxxxxx`
+
 Check out `/examples` for inspiration! Learn more about each one in its README.
 
 - [X] [`basic`](examples/basic): Simple examples of fundamentals like setup, function calling, handoffs, and context variables
 - [X] [`triage_agent`](examples/triage_agent): Simple example of setting up a basic triage step to hand off to the right agent
 - [X] [`weather_agent`](examples/weather_agent): Simple example of function calling
-- [ ] [`airline`](examples/airline): A multi-agent setup for handling different customer service requests in an airline context.
+- [X] [`airline`](examples/airline): A multi-agent setup for handling different customer service requests in an airline context.
+  - running: `DEBUG=1 ruby examples/airline/main.rb`
 - [ ] [`support_bot`](examples/support_bot): A customer service bot which includes a user interface agent and a help center agent with several tools
 - [ ] [`personal_shopper`](examples/personal_shopper): A personal shopping agent that can help with making sales and refunding orders
 
