@@ -44,6 +44,7 @@ end
 # Define agents
 def triage_agent
   @triage_agent ||= OpenAISwarm::Agent.new(
+    model: "gpt-4o-mini",
     name: "Triage Agent",
     instructions: method(:triage_instructions),
     functions: [method(:transfer_to_flight_modification), method(:transfer_to_lost_baggage)]
@@ -52,6 +53,7 @@ end
 
 def flight_modification
   @flight_modification ||= OpenAISwarm::Agent.new(
+    model: "gpt-4o-mini",
     name: "Flight Modification Agent",
     instructions: <<~INSTRUCTIONS,
       You are a Flight Modification Agent for a customer service airlines company.
@@ -66,6 +68,7 @@ end
 
 def flight_cancel
   @flight_cancel ||= OpenAISwarm::Agent.new(
+    model: "gpt-4o-mini",
     name: "Flight Cancel Traversal",
     instructions: STARTER_PROMPT + FLIGHT_CANCELLATION_POLICY,
     functions: [
@@ -80,6 +83,7 @@ end
 
 def flight_change
   @flight_change ||= OpenAISwarm::Agent.new(
+    model: "gpt-4o-mini",
     name: "Flight Change Traversal",
     instructions: STARTER_PROMPT + FLIGHT_CHANGE_POLICY,
     functions: [
@@ -94,6 +98,7 @@ end
 
 def lost_baggage
   @lost_baggage ||= OpenAISwarm::Agent.new(
+    model: "gpt-4o-mini",
     name: "Lost Baggage Traversal",
     instructions: STARTER_PROMPT + LOST_BAGGAGE_POLICY,
     functions: [
