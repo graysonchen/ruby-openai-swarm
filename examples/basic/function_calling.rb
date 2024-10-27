@@ -24,5 +24,7 @@ response = client.run(
   debug: true,
 )
 
+pp response.messages.last
+
 # print(response.messages[-1]["content"])
 # The current temperature in New York City is 67°F. => nil

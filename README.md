@@ -131,7 +131,9 @@ Check out `/examples` for inspiration! Learn more about each one in its README.
   - running: `ruby examples/basic/function_calling.rb`
   - running: `ruby examples/basic/simple_loop_no_helpers.rb`
 - [X] [`triage_agent`](examples/triage_agent): Simple example of setting up a basic triage step to hand off to the right agent
+  - running: `ruby examples/triage_agent/main.rb`
 - [X] [`weather_agent`](examples/weather_agent): Simple example of function calling
+  - running: `ruby examples/weather_agent/agents.rb`
 - [X] [`airline`](examples/airline): A multi-agent setup for handling different customer service requests in an airline context.
   - running: `DEBUG=1 ruby examples/airline/main.rb`
 - [ ] [`support_bot`](examples/support_bot): A customer service bot which includes a user interface agent and a help center agent with several tools

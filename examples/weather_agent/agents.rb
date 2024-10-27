@@ -1,8 +1,4 @@
-
-OpenAI.configure do |config|
-  config.access_token = ENV['OPEN_ROUTER_ACCESS_TOKEN']
-  config.uri_base = "https://openrouter.ai/api/v1"
-end
+require_relative "../bootstrap"
 
 client = OpenAISwarm.new
 
@@ -49,11 +45,13 @@ response = client.run(
   debug: true,
 )
 # print(response.messages[-1]["content"])
+pp response.messages.last
 
 response = client.run(
   messages: [{"role" => "user", "content" => "What is the time right now?",}],
   agent: weather_agent,
   debug: true,
 )
+pp response.messages.last
 # p response.messages[-1]["content"]
 # return: I'm sorry for the confusion, but as an AI, I don't have the ability to provide real-time information such as the current time. Please check the time on your device.
