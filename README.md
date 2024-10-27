@@ -2,6 +2,7 @@
 
 # Ruby OpenAI Swarm
 
+[![Gem Version](https://img.shields.io/gem/v/ruby-openai-swarm.svg)](https://rubygems.org/gems/ruby-openai-swarm)
 [![rspec](https://github.com/graysonchen/ruby-openai-swarm/actions/workflows/rspec.yml/badge.svg)](https://github.com/graysonchen/ruby-openai-swarm/actions)
 
 A Ruby-based educational framework adapted from OpenAI’s [Swarm](https://github.com/openai/swarm), exploring ergonomic, lightweight multi-agent orchestration.
