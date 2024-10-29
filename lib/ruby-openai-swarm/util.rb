@@ -8,23 +8,28 @@ module OpenAISwarm
     end
 
     def self.merge_fields(target, source)
+      semantic_keyword = %W[type]
       source.each do |key, value|
         if value.is_a?(String)
-          target[key] = target[key].to_s + value
-        elsif value && value.is_a?(Hash)
-          target[key] ||= {}
+          if semantic_keyword.include?(key)
+            target[key] = value
+          else
+            target[key] += value
+          end
+        elsif value.is_a?(Hash) && value != nil
           merge_fields(target[key], value)
         end
       end
     end
 
     def self.merge_chunk(final_response, delta)
-      delta.delete(:role)
+      delta.delete("role")
       merge_fields(final_response, delta)
 
-      if delta['tool_calls']&.any?
-        index = delta['tool_calls'][0].delete('index')
-        merge_fields(final_response['tool_calls'][index], delta['tool_calls'][0])
+      tool_calls = delta["tool_calls"]
+      if tool_calls && !tool_calls.empty?
+        index = tool_calls[0].delete("index")
+        merge_fields(final_response["tool_calls"][index], tool_calls[0])
       end
     end
 

@@ -200,19 +200,33 @@ module OpenAISwarm
       init_len = messages.length
 
       while history.length - init_len < max_turns && active_agent
+        # message = {
+        #   content: "",
+        #   sender: agent.name,
+        #   role: "assistant",
+        #   function_call: nil,
+        #   tool_calls: Hash.new do |h, k|
+        #     h[k] = {
+        #       function: { arguments: "", name: "" },
+        #       id: "",
+        #       type: ""
+        #     }
+        #   end
+        # }.transform_keys(&:to_s)
+
         message = {
-          content: "",
-          sender: agent.name,
-          role: "assistant",
-          function_call: nil,
-          tool_calls: Hash.new do |h, k|
-            h[k] = {
-              function: { arguments: "", name: "" },
-              id: "",
-              type: ""
+          "content" => "",
+          "sender" => agent.name,
+          "role" => "assistant",
+          "function_call" => nil,
+          "tool_calls" => Hash.new do |hash, key|
+            hash[key] = {
+              "function" => { "arguments" => "", "name" => "" },
+              "id" => "",
+              "type" => ""
             }
           end
-        }.transform_keys(&:to_s)
+        }
 
         completion = get_chat_completion(
           active_agent,
@@ -225,22 +239,16 @@ module OpenAISwarm
 
         yield({ delim: "start" }) if block_given?
         completion.each do |chunk|
-          # begin
-            # binding.pry
-            puts ">>>#{chunk.inspect}"
-            delta = chunk.dig('choices', 0, 'delta')
-            if delta['role'] == "assistant"
-              delta['sender'] = active_agent.name
-            end
+          delta = chunk.dig('choices', 0, 'delta')
+          if delta['role'] == "assistant"
+            delta['sender'] = active_agent.name
+          end
 
-            yield delta if block_given?
+          yield delta if block_given?
 
-            delta.delete('role')
-            delta.delete('sender')
-            Util.merge_chunk(message, delta)
-          # rescue
-          #   binding.pry
-          # end
+          delta.delete('role')
+          delta.delete('sender')
+          Util.merge_chunk(message, delta)
         end
         yield({ delim: "end" }) if block_given?
 
@@ -254,25 +262,18 @@ module OpenAISwarm
         # convert tool_calls to objects
         tool_calls = message['tool_calls'].map do |tool_call|
           OpenStruct.new(
-            id: tool_call[:id],
+            id: tool_call['id'],
             function: OpenStruct.new(
-              arguments: tool_call[:function][:arguments],
-              name: tool_call[:function][:name]
+              arguments: tool_call['function']['arguments'],
+              name: tool_call['function']['name']
             ),
-            type: tool_call[:type]
+            type: tool_call['type']
           )
         end
 
-        # partial_response = handle_tool_calls(
-        #   message['tool_calls'],
-        #   active_agent,
-        #   context_variables,
-        #   debug
-        # )
-
         partial_response = handle_tool_calls(
           tool_calls,
-          active_agent, # TODO: will check
+          active_agent,
           context_variables,
           debug
         )
