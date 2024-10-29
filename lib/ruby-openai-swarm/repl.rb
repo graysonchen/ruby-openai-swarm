@@ -2,7 +2,6 @@ module OpenAISwarm
   class Repl
     class << self
       def process_and_print_streaming_response(response)
-        # content = ""
         content = []
         last_sender = ""
         response.each do |chunk|
@@ -10,7 +9,8 @@ module OpenAISwarm
 
           if chunk.key?("content") && !chunk["content"].nil?
             if content.empty? && !last_sender.empty?
-              print "\033[94m content- #{last_sender}:\033[0m "
+              puts
+              print "\033[94m #{last_sender}:\033[0m "
               last_sender = ""
             end
             print chunk["content"]
@@ -22,7 +22,7 @@ module OpenAISwarm
               f = tool_call["function"]
               name = f["name"]
               next if name.nil?
-              print "\033[94m tool_calls - #{last_sender}: \033[95m#{name}\033[0m()"
+              print "\033[94m#{last_sender}: \033[95m#{name}\033[0m()"
             end
           end
 

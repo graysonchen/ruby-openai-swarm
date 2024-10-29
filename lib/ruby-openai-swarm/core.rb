@@ -200,20 +200,6 @@ module OpenAISwarm
       init_len = messages.length
 
       while history.length - init_len < max_turns && active_agent
-        # message = {
-        #   content: "",
-        #   sender: agent.name,
-        #   role: "assistant",
-        #   function_call: nil,
-        #   tool_calls: Hash.new do |h, k|
-        #     h[k] = {
-        #       function: { arguments: "", name: "" },
-        #       id: "",
-        #       type: ""
-        #     }
-        #   end
-        # }.transform_keys(&:to_s)
-
         message = {
           "content" => "",
           "sender" => agent.name,

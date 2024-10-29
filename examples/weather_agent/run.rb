@@ -14,4 +14,4 @@ GUIDE_EXAMPLES
 
 puts guide_examples
 
-OpenAISwarm::Repl.run_demo_loop(weather_agent, stream: true, debug: true)
+OpenAISwarm::Repl.run_demo_loop(weather_agent, stream: true, debug: env_debug)
