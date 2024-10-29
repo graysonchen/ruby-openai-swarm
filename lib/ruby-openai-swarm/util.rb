@@ -7,6 +7,22 @@ module OpenAISwarm
       puts "\e[97m[\e[90m#{timestamp}\e[97m]\e[90m #{message}\e[0m"
     end
 
+    def self.message_template(agent_name)
+      {
+        "content" => "",
+        "sender" => agent_name,
+        "role" => "assistant",
+        "function_call" => nil,
+        "tool_calls" => Hash.new do |hash, key|
+          hash[key] = {
+            "function" => { "arguments" => "", "name" => "" },
+            "id" => "",
+            "type" => ""
+          }
+        end
+      }
+    end
+
     def self.merge_fields(target, source)
       semantic_keyword = %W[type]
       source.each do |key, value|

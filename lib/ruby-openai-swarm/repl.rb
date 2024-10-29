@@ -10,7 +10,7 @@ module OpenAISwarm
           if chunk.key?("content") && !chunk["content"].nil?
             if content.empty? && !last_sender.empty?
               puts
-              print "\033[94m #{last_sender}:\033[0m "
+              print "\033[94m#{last_sender}:\033[0m "
               last_sender = ""
             end
             print chunk["content"]
