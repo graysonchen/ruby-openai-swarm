@@ -18,6 +18,10 @@ A Ruby-based educational framework adapted from OpenAI’s [Swarm](https://githu
   - [examples](#examples)
   - [Documentation](#documentation)
 
+## quick show
+https://github.com/user-attachments/assets/ed84ef83-5ccb-4223-abb8-933d0ec66468
+
+
 ## Installation
 
 ### Bundler
