@@ -227,7 +227,7 @@ module OpenAISwarm
         completion.each do |chunk|
           # begin
             # binding.pry
-            # puts ">>>#{chunk.inspect}"
+            puts ">>>#{chunk.inspect}"
             delta = chunk.dig('choices', 0, 'delta')
             if delta['role'] == "assistant"
               delta['sender'] = active_agent.name
@@ -237,7 +237,6 @@ module OpenAISwarm
 
             delta.delete('role')
             delta.delete('sender')
-
             Util.merge_chunk(message, delta)
           # rescue
           #   binding.pry
@@ -253,7 +252,7 @@ module OpenAISwarm
         break if !message['tool_calls'] || !execute_tools
 
         # convert tool_calls to objects
-        tool_calls = message[:tool_calls].map do |tool_call|
+        tool_calls = message['tool_calls'].map do |tool_call|
           OpenStruct.new(
             id: tool_call[:id],
             function: OpenStruct.new(
@@ -264,9 +263,16 @@ module OpenAISwarm
           )
         end
 
+        # partial_response = handle_tool_calls(
+        #   message['tool_calls'],
+        #   active_agent,
+        #   context_variables,
+        #   debug
+        # )
+
         partial_response = handle_tool_calls(
           tool_calls,
-          active_agent.functions, # TODO: will check
+          active_agent, # TODO: will check
           context_variables,
           debug
         )

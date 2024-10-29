@@ -22,9 +22,9 @@ module OpenAISwarm
       delta.delete(:role)
       merge_fields(final_response, delta)
 
-      if delta[:tool_calls]&.any?
-        index = delta[:tool_calls][0].delete(:index)
-        merge_fields(final_response[:tool_calls][index], delta[:tool_calls][0])
+      if delta['tool_calls']&.any?
+        index = delta['tool_calls'][0].delete('index')
+        merge_fields(final_response['tool_calls'][index], delta['tool_calls'][0])
       end
     end
 
