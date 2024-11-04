@@ -68,27 +68,17 @@ module OpenAISwarm
 
           messages << { "role" => "user", "content" => user_input }
 
+          response = client.run(
+            agent: agent,
+            messages: messages,
+            context_variables: context_variables,
+            stream: stream,
+            debug: debug
+          )
+
           if stream
-            chunks = Enumerator.new do |yielder|
-              client.run_and_stream(
-                agent: agent,
-                messages: messages,
-                context_variables: context_variables,
-                # stream: stream,
-                debug: debug
-              ) do |chunk|
-                yielder << chunk
-              end
-            end
-            response = process_and_print_streaming_response(chunks)
+            response = process_and_print_streaming_response(response)
           else
-            response = client.run(
-              agent: agent,
-              messages: messages,
-              context_variables: context_variables,
-              stream: stream,
-              debug: debug
-            )
             pretty_print_messages(response.messages)
           end
           messages.concat(response.messages)

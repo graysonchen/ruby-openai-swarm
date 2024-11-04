@@ -138,15 +138,19 @@ module OpenAISwarm
 
     def run(agent:, messages:, context_variables: {}, model_override: nil, stream: false, debug: false, max_turns: Float::INFINITY, execute_tools: true)
       if stream
-        return run_and_stream(
-          agent: agent,
-          messages: messages,
-          context_variables: context_variables,
-          model_override: model_override,
-          debug: debug,
-          max_turns: max_turns,
-          execute_tools: execute_tools
-        )
+        return Enumerator.new do |yielder|
+          run_and_stream(
+            agent: agent,
+            messages: messages,
+            context_variables: context_variables,
+            model_override: model_override,
+            debug: debug,
+            max_turns: max_turns,
+            execute_tools: execute_tools
+          ) do |chunk|
+            yielder << chunk
+          end
+        end
       end
 
       active_agent = agent

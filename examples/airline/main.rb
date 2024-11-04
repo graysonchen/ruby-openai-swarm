@@ -65,4 +65,7 @@ params:
 GUIDE_EXAMPLES
 puts guide_examples
 
-OpenAISwarm::Repl.run_demo_loop(triage_agent, context_variables: context_variables, debug: env_debug)
+OpenAISwarm::Repl.run_demo_loop(triage_agent,
+                                context_variables: context_variables,
+                                debug: env_debug,
+                                stream: true)
