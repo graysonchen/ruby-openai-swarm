@@ -103,7 +103,7 @@ module OpenAISwarm
           Util.debug_print(debug, "Tool #{name} not found in function map.")
           partial_response.messages << {
             role: 'tool',
-            tool_call_id: tool_call.id,
+            tool_call_id: tool_call['id'],
             tool_name: name,
             content: "Error: Tool #{name} not found."
           }

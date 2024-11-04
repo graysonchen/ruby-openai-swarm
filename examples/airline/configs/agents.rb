@@ -47,7 +47,9 @@ def triage_agent
     model: "gpt-4o-mini",
     name: "Triage Agent",
     instructions: method(:triage_instructions),
-    functions: [method(:transfer_to_flight_modification), method(:transfer_to_lost_baggage)]
+    functions: [
+      method(:transfer_to_flight_modification),
+      method(:transfer_to_lost_baggage)]
   )
 end
 
