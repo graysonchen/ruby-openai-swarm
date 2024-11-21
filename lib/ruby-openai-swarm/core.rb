@@ -102,10 +102,10 @@ module OpenAISwarm
         unless function_map.key?(name)
           Util.debug_print(debug, "Tool #{name} not found in function map.")
           partial_response.messages << {
-            role: 'tool',
-            tool_call_id: tool_call['id'],
-            tool_name: name,
-            content: "Error: Tool #{name} not found."
+            'role' => 'tool',
+            'tool_call_id' => tool_call['id'],
+            'tool_name' => name,
+            'content' => "Error: Tool #{name} not found."
           }
           next
         end
@@ -123,10 +123,10 @@ module OpenAISwarm
         result = handle_function_result(raw_result, debug)
 
         partial_response.messages << {
-          role: 'tool',
-          tool_call_id: tool_call['id'],
-          tool_name: name,
-          content: result.value
+          'role' => 'tool',
+          'tool_call_id' => tool_call['id'],
+          'tool_name' => name,
+          'content' => result.value
         }
 
         partial_response.context_variables.merge!(result.context_variables)
