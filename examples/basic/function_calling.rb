@@ -6,7 +6,20 @@ def get_weather(location:)
   "{'temp':67, 'unit':'F'}"
 end
 
-function_instance = OpenAISwarm::FunctionDescriptor.new(
+def get_news(category:)
+  [
+    "Tech Company A Acquires Startup B",
+    "New AI Model Revolutionizes Industry",
+    "Breakthrough in Quantum Computing"
+  ].sample
+end
+
+get_news_instance = OpenAISwarm::FunctionDescriptor.new(
+  target_method: :get_news,
+  description: 'Get the latest news headlines. The category of news, e.g., world, business, sports.'
+)
+
+get_weather_instance = OpenAISwarm::FunctionDescriptor.new(
   target_method: :get_weather,
   description: 'Simulate fetching weather data'
 )
@@ -15,16 +28,34 @@ agent = OpenAISwarm::Agent.new(
   name: "Agent",
   instructions: "You are a helpful agent.",
   model: "gpt-4o-mini",
-  functions: [function_instance]
-)
-# debugger logger: {:model=>"gpt-4o-mini", :messages=>[{:role=>"system", :content=>"You are a helpful agent."}, {"role"=>"user", "content"=>"What's the weather in NYC?"}], :tools=>[{:type=>"function", :function=>{:name=>"get_weather", :description=>"", :parameters=>{:type=>"object", :properties=>{:location=>{:type=>"string"}}, :required=>["location"]}}}], :stream=>false, :parallel_tool_calls=>true}
-response = client.run(
-  messages: [{"role" => "user", "content" => "What's the weather in NYC?"}],
-  agent: agent,
-  debug: true,
+  functions: [
+    get_weather_instance,
+    get_news_instance
+  ]
 )
 
-pp response.messages.last
+guide_examples = <<~GUIDE_EXAMPLES
+############# GUIDE_EXAMPLES #####################################
+examples:
+  What's the weather in NYC?
 
-# print(response.messages[-1]["content"])
-# The current temperature in New York City is 67°F. => nil
+  Tell me the weather in New York and the latest news headlines.
+
+Details:
+	1. Single Function Call
+	     Example: “What’s the weather in NYC?”
+	     Action: Calls get_weather with location “New York City”.
+	     Response: Only provides weather details.
+	2. Multiple Function Calls
+	     Example: “Tell me the weather in New York and the latest news headlines.”
+	     Action: Calls get_weather for weather and get_news for news.
+	     Response: Combines weather and news information.
+
+params:
+  `DEBUG=1 ruby examples/basic/function_calling.rb` # turn on debug (default turn off)
+################################################################
+GUIDE_EXAMPLES
+
+puts guide_examples
+
+OpenAISwarm::Repl.run_demo_loop(agent, stream: true, debug: env_debug)
