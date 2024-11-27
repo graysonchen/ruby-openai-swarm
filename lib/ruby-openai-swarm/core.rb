@@ -212,6 +212,9 @@ module OpenAISwarm
 
         yield({ delim: "start" }) if block_given?
         completion.each do |chunk|
+
+          raise OpenAISwarm::Error.new(chunk['error']) if chunk['error']
+
           delta = chunk.dig('choices', 0, 'delta')
           if delta['role'] == "assistant"
             delta['sender'] = active_agent.name
