@@ -55,7 +55,8 @@ RSpec.describe OpenAISwarm::Util do
     let(:mock_function) do
       instance_double('Function',
         target_method: mock_method,
-        description: 'This is a test function'
+        description: 'This is a test function',
+        parameters: nil
       )
     end
 

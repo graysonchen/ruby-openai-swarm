@@ -52,6 +52,7 @@ module OpenAISwarm
     def self.function_to_json(func_instance)
       is_target_method = func_instance.respond_to?(:target_method) || func_instance.is_a?(OpenAISwarm::FunctionDescriptor)
       func = is_target_method ? func_instance.target_method : func_instance
+      custom_parameters = is_target_method ? func_instance.parameters : nil
 
       function_name = func.name
       function_parameters = func.parameters
@@ -82,16 +83,18 @@ module OpenAISwarm
 
       description = func_instance.respond_to?(:description) ? func_instance&.description : nil
 
+      json_parameters = {
+        type: "object",
+        properties: parameters,
+        required: required
+      }
+
       {
         type: "function",
         function: {
           name: function_name,
           description: description || '',
-          parameters: {
-            type: "object",
-            properties: parameters,
-            required: required
-          }
+          parameters: custom_parameters || json_parameters
         }
       }
     end
