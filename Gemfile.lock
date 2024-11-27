@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    ruby-openai-swarm (0.2.2)
+    ruby-openai-swarm (0.2.3)
       ruby-openai (~> 7.3)
 
 GEM
