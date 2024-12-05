@@ -8,7 +8,13 @@ require 'ruby-openai-swarm/function_descriptor'
 require 'ruby-openai-swarm/repl'
 
 module OpenAISwarm
-  class Error < StandardError; end
+  class Error < StandardError;
+    attr_reader :details
+    def initialize(message, details = {})
+      @details = details
+      super(message)
+    end
+  end
 
   class << self
     def new(client = nil)
