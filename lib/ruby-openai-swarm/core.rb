@@ -265,6 +265,14 @@ module OpenAISwarm
         history.concat(partial_response.messages)
         context_variables.merge!(partial_response.context_variables)
         active_agent = partial_response.agent if partial_response.agent
+
+        tool_call_messages = (Array.wrap(message) + partial_response.messages)
+        yield(
+          'tool_call_messages' => Response.new(
+            messages: tool_call_messages,
+            agent: active_agent,
+            context_variables: context_variables)
+        ) if block_given?
       end
 
       yield(
