@@ -43,7 +43,7 @@ module OpenAISwarm
       create_params[:parallel_tool_calls] = agent.parallel_tool_calls if tools.any?
 
       Util.debug_print(debug, "Getting chat completion for...:", create_params)
-      log_message(:debug, "Getting chat completion for...:", create_params)
+      log_message(:info, "Getting chat completion for...:", create_params)
 
       if stream
         return Enumerator.new do |yielder|
@@ -118,7 +118,7 @@ module OpenAISwarm
 
         args = JSON.parse(tool_call.dig('function', 'arguments') || '{}')
         Util.debug_print(debug, "Processing tool call: #{name} with arguments #{args}")
-        log_message(:debug, "Processing tool call: #{name} with arguments #{args}")
+        log_message(:info, "Processing tool call: #{name} with arguments #{args}")
 
         func = function_map[name]
         # pass context_variables to agent functions
