@@ -9,14 +9,17 @@ module OpenAISwarm
     include Util
     CTX_VARS_NAME = 'context_variables'
 
-    def initialize(client = nil)
+    def initialize(client = nil, logger: nil, log_path: nil)
       @client = client || OpenAI::Client.new
+      setup_logger(logger, log_path)
     end
 
     def get_chat_completion(agent, history, context_variables, model_override, stream, debug)
       context_variables = context_variables.dup
       instructions = agent.instructions.respond_to?(:call) ? agent.instructions.call(context_variables) : agent.instructions
       messages = [{ role: 'system', content: instructions }] + history
+
+      log_message(:debug, "Getting chat completion for:", messages)
       Util.debug_print(debug, "Getting chat completion for...:", messages)
 
       tools = agent.functions.map { |f| Util.function_to_json(f) }
@@ -41,6 +44,8 @@ module OpenAISwarm
       create_params[:parallel_tool_calls] = agent.parallel_tool_calls if tools.any?
 
       Util.debug_print(debug, "Client chat parameters:", create_params)
+      log_message(:info, "Sending request to OpenAI API", create_params)
+
       if stream
         return Enumerator.new do |yielder|
           @client.chat(parameters: create_params.merge(
@@ -56,6 +61,7 @@ module OpenAISwarm
       Util.debug_print(debug, "API Response:", response)
       response
     rescue OpenAI::Error => e
+      log_message(:error, "OpenAI API Error: #{e.message}")
       Util.debug_print(true, "OpenAI API Error:", e.message)
       raise
     end
@@ -81,6 +87,7 @@ module OpenAISwarm
     end
 
     def handle_tool_calls(tool_calls, active_agent, context_variables, debug)
+      log_message(:debug, "Processing tool calls", tool_calls)
       functions = active_agent.functions
 
       function_map = functions.map do |f|
@@ -280,6 +287,27 @@ module OpenAISwarm
                                    agent: active_agent,
                                    context_variables: context_variables)
       ) if block_given?
+    end
+
+    private
+
+    def setup_logger(logger, log_path)
+      @logger = if logger
+                  logger
+                elsif defined?(Rails)
+                  OpenAISwarm::Logger.instance.logger(log_path)
+                else
+                  OpenAISwarm::Logger.instance.logger(log_path)
+                end
+    end
+
+    def log_message(level, message, data = nil)
+      return unless @logger
+
+      log_text = message
+      log_text += "\n#{data.inspect}" if data
+
+      @logger.send(level, log_text)
     end
   end
 end

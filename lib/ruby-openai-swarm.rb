@@ -6,6 +6,8 @@ require 'ruby-openai-swarm/util'
 require 'ruby-openai-swarm/core'
 require 'ruby-openai-swarm/function_descriptor'
 require 'ruby-openai-swarm/repl'
+require 'ruby-openai-swarm/configuration'
+require 'ruby-openai-swarm/logger'
 
 module OpenAISwarm
   class Error < StandardError;
