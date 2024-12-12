@@ -19,7 +19,6 @@ module OpenAISwarm
       instructions = agent.instructions.respond_to?(:call) ? agent.instructions.call(context_variables) : agent.instructions
       messages = [{ role: 'system', content: instructions }] + history
 
-      # log_message(:debug, "Getting chat completion for...:", messages)
       # Util.debug_print(debug, "Getting chat completion for...:", messages)
 
       tools = agent.functions.map { |f| Util.function_to_json(f) }
@@ -203,8 +202,6 @@ module OpenAISwarm
       )
     end
 
-    # private
-
     def run_and_stream(agent:, messages:, context_variables: {}, model_override: nil, debug: false, max_turns: Float::INFINITY, execute_tools: true)
       active_agent = agent
       context_variables = context_variables.dup
@@ -301,21 +298,6 @@ module OpenAISwarm
     end
 
     private
-
-    # def setup_logger(logger, log_path)
-    #   # @logger = if logger
-    #   #             logger
-    #   #           elsif defined?(Rails)
-    #   #             OpenAISwarm::Logger.instance.logger(log_path)
-    #   #           else
-    #   #             OpenAISwarm::Logger.instance.logger(log_path)
-    #   #           end
-    #   @logger = OpenAISwarm::Logger.instance.logger(log_path)
-    # end
-
-    # def setup_logger
-    #   @logger = OpenAISwarm::Logger.instance.logger
-    # end
 
     def log_message(level, message, data = nil)
       return unless @logger
