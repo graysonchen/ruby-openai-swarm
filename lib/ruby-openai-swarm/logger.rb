@@ -3,6 +3,15 @@ require 'fileutils'
 
 module OpenAISwarm
   class Logger
+    SEVERITY_COLORS = {
+      'DEBUG' => "\e[36m", # Cyan
+      'INFO'  => "\e[32m", # Green
+      'WARN'  => "\e[33m", # Yellow
+      'ERROR' => "\e[31m", # Red
+      'FATAL' => "\e[35m", # Purple
+      'ANY'   => "\e[0m"   # Reset color
+    }.freeze
+
     def self.instance
       @instance ||= new
     end
@@ -20,7 +29,9 @@ module OpenAISwarm
 
       logger = ::Logger.new(path)
       logger.formatter = proc do |severity, datetime, progname, msg|
-        "[#{datetime}] #{severity} OpenAISwarm: #{msg}\n"
+        color = SEVERITY_COLORS[severity] || SEVERITY_COLORS['ANY']
+        reset = SEVERITY_COLORS['ANY']
+        "[#{datetime}] #{color}#{severity}#{reset} OpenAISwarm: #{msg}\n"
       end
 
       @loggers[log_path] = logger

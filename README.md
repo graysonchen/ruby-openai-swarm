@@ -15,6 +15,7 @@ A Ruby-based educational framework adapted from OpenAI’s [Swarm](https://githu
   - [Installation](#installation)
     - [Bundler](#bundler)
     - [Gem install](#gem-install)
+    - [Logger](#logger)
   - [examples](#examples)
   - [Documentation](#documentation)
 
@@ -112,6 +113,18 @@ pp response.messages.last
  "content"=>"¡Hola! Estoy bien, gracias. ¿Y tú?",
  "refusal"=>nil,
  :sender=>"Spanish Agent"}
+```
+
+### Logger
+
+```
+OpenAISwarm.configure do |config|
+  # config.logger = Logger.new(STDOUT)
+  # config.logger = Rails.logger
+  config.log_file = Rails.root.join('log', 'openai_swarm.log')
+  # config.logger = Logger.new(Rails.root.join('log', 'openai_swarm.log'))
+  # config.logger = Rails.configuration.lograge.logger
+end
 ```
 
 # Examples
