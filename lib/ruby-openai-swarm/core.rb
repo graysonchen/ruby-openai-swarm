@@ -11,13 +11,15 @@ module OpenAISwarm
 
     def initialize(client = nil)
       @client = client || OpenAI::Client.new
+      @logger = OpenAISwarm::Logger.instance.logger
     end
 
     def get_chat_completion(agent, history, context_variables, model_override, stream, debug)
       context_variables = context_variables.dup
       instructions = agent.instructions.respond_to?(:call) ? agent.instructions.call(context_variables) : agent.instructions
       messages = [{ role: 'system', content: instructions }] + history
-      Util.debug_print(debug, "Getting chat completion for...:", messages)
+
+      # Util.debug_print(debug, "Getting chat completion for...:", messages)
 
       tools = agent.functions.map { |f| Util.function_to_json(f) }
       # hide context_variables from model
@@ -40,7 +42,9 @@ module OpenAISwarm
       create_params[:tool_choice] = agent.tool_choice if agent.tool_choice
       create_params[:parallel_tool_calls] = agent.parallel_tool_calls if tools.any?
 
-      Util.debug_print(debug, "Client chat parameters:", create_params)
+      Util.debug_print(debug, "Getting chat completion for...:", create_params)
+      log_message(:info, "Getting chat completion for...:", create_params)
+
       if stream
         return Enumerator.new do |yielder|
           @client.chat(parameters: create_params.merge(
@@ -56,6 +60,7 @@ module OpenAISwarm
       Util.debug_print(debug, "API Response:", response)
       response
     rescue OpenAI::Error => e
+      log_message(:error, "OpenAI API Error: #{e.message}")
       Util.debug_print(true, "OpenAI API Error:", e.message)
       raise
     end
@@ -101,6 +106,7 @@ module OpenAISwarm
         name = tool_call.dig('function', 'name')
         unless function_map.key?(name)
           Util.debug_print(debug, "Tool #{name} not found in function map.")
+          log_message(:error, "Tool #{name} not found in function map.")
           partial_response.messages << {
             'role' => 'tool',
             'tool_call_id' => tool_call['id'],
@@ -112,6 +118,7 @@ module OpenAISwarm
 
         args = JSON.parse(tool_call.dig('function', 'arguments') || '{}')
         Util.debug_print(debug, "Processing tool call: #{name} with arguments #{args}")
+        log_message(:info, "Processing tool call: #{name} with arguments #{args}")
 
         func = function_map[name]
         # pass context_variables to agent functions
@@ -166,11 +173,15 @@ module OpenAISwarm
 
         message = completion.dig('choices', 0, 'message')
         Util.debug_print(debug, "Received completion:", message)
+        log_message(:info, "Received completion:", message)
 
         message['sender'] = active_agent.name
         history << message
 
-        break if !message['tool_calls'] || !execute_tools
+        if !message['tool_calls'] || !execute_tools
+          log_message(:info, "Ending turn.")
+          break
+        end
 
         partial_response = handle_tool_calls(
           message['tool_calls'],
@@ -190,8 +201,6 @@ module OpenAISwarm
         context_variables: context_variables
       )
     end
-
-    # private
 
     def run_and_stream(agent:, messages:, context_variables: {}, model_override: nil, debug: false, max_turns: Float::INFINITY, execute_tools: true)
       active_agent = agent
@@ -239,9 +248,15 @@ module OpenAISwarm
         message['tool_calls'] = message['tool_calls'].values
         message['tool_calls'] = nil if message['tool_calls'].empty?
         Util.debug_print(debug, "Received completion:", message)
+        log_message(:info, "Received completion:", message)
+
         history << message
 
-        break if !message['tool_calls'] || !execute_tools
+
+        if !message['tool_calls'] || !execute_tools
+          log_message(:info, "Ending turn.")
+          break
+        end
 
         # convert tool_calls to objects
         tool_calls = message['tool_calls'].map do |tool_call|
@@ -280,6 +295,17 @@ module OpenAISwarm
                                    agent: active_agent,
                                    context_variables: context_variables)
       ) if block_given?
+    end
+
+    private
+
+    def log_message(level, message, data = nil)
+      return unless @logger
+
+      log_text = message
+      log_text += "\n#{data.inspect}" if data
+
+      @logger.send(level, log_text)
     end
   end
 end
