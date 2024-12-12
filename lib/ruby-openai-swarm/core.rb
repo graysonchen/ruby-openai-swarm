@@ -19,8 +19,8 @@ module OpenAISwarm
       instructions = agent.instructions.respond_to?(:call) ? agent.instructions.call(context_variables) : agent.instructions
       messages = [{ role: 'system', content: instructions }] + history
 
-      log_message(:debug, "Getting chat completion for:", messages)
-      Util.debug_print(debug, "Getting chat completion for...:", messages)
+      # log_message(:debug, "Getting chat completion for...:", messages)
+      # Util.debug_print(debug, "Getting chat completion for...:", messages)
 
       tools = agent.functions.map { |f| Util.function_to_json(f) }
       # hide context_variables from model
@@ -43,8 +43,8 @@ module OpenAISwarm
       create_params[:tool_choice] = agent.tool_choice if agent.tool_choice
       create_params[:parallel_tool_calls] = agent.parallel_tool_calls if tools.any?
 
-      Util.debug_print(debug, "Client chat parameters:", create_params)
-      log_message(:info, "Sending request to OpenAI API", create_params)
+      Util.debug_print(debug, "Getting chat completion for...:", create_params)
+      log_message(:debug, "Getting chat completion for...:", create_params)
 
       if stream
         return Enumerator.new do |yielder|
@@ -87,7 +87,6 @@ module OpenAISwarm
     end
 
     def handle_tool_calls(tool_calls, active_agent, context_variables, debug)
-      log_message(:debug, "Processing tool calls", tool_calls)
       functions = active_agent.functions
 
       function_map = functions.map do |f|
@@ -108,6 +107,7 @@ module OpenAISwarm
         name = tool_call.dig('function', 'name')
         unless function_map.key?(name)
           Util.debug_print(debug, "Tool #{name} not found in function map.")
+          log_message(:error, "Tool #{name} not found in function map.")
           partial_response.messages << {
             'role' => 'tool',
             'tool_call_id' => tool_call['id'],
@@ -119,6 +119,7 @@ module OpenAISwarm
 
         args = JSON.parse(tool_call.dig('function', 'arguments') || '{}')
         Util.debug_print(debug, "Processing tool call: #{name} with arguments #{args}")
+        log_message(:debug, "Processing tool call: #{name} with arguments #{args}")
 
         func = function_map[name]
         # pass context_variables to agent functions
@@ -173,11 +174,15 @@ module OpenAISwarm
 
         message = completion.dig('choices', 0, 'message')
         Util.debug_print(debug, "Received completion:", message)
+        log_message(:info, "Received completion:", message)
 
         message['sender'] = active_agent.name
         history << message
 
-        break if !message['tool_calls'] || !execute_tools
+        if !message['tool_calls'] || !execute_tools
+          log_message(:info, "Ending turn.")
+          break
+        end
 
         partial_response = handle_tool_calls(
           message['tool_calls'],
@@ -246,9 +251,15 @@ module OpenAISwarm
         message['tool_calls'] = message['tool_calls'].values
         message['tool_calls'] = nil if message['tool_calls'].empty?
         Util.debug_print(debug, "Received completion:", message)
+        log_message(:info, "Received completion:", message)
+
         history << message
 
-        break if !message['tool_calls'] || !execute_tools
+
+        if !message['tool_calls'] || !execute_tools
+          log_message(:info, "Ending turn.")
+          break
+        end
 
         # convert tool_calls to objects
         tool_calls = message['tool_calls'].map do |tool_call|
