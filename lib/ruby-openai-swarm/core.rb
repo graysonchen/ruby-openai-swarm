@@ -9,9 +9,9 @@ module OpenAISwarm
     include Util
     CTX_VARS_NAME = 'context_variables'
 
-    def initialize(client = nil, logger: nil, log_path: nil)
+    def initialize(client = nil)
       @client = client || OpenAI::Client.new
-      setup_logger(logger, log_path)
+      @logger = OpenAISwarm::Logger.instance.logger
     end
 
     def get_chat_completion(agent, history, context_variables, model_override, stream, debug)
@@ -291,15 +291,20 @@ module OpenAISwarm
 
     private
 
-    def setup_logger(logger, log_path)
-      @logger = if logger
-                  logger
-                elsif defined?(Rails)
-                  OpenAISwarm::Logger.instance.logger(log_path)
-                else
-                  OpenAISwarm::Logger.instance.logger(log_path)
-                end
-    end
+    # def setup_logger(logger, log_path)
+    #   # @logger = if logger
+    #   #             logger
+    #   #           elsif defined?(Rails)
+    #   #             OpenAISwarm::Logger.instance.logger(log_path)
+    #   #           else
+    #   #             OpenAISwarm::Logger.instance.logger(log_path)
+    #   #           end
+    #   @logger = OpenAISwarm::Logger.instance.logger(log_path)
+    # end
+
+    # def setup_logger
+    #   @logger = OpenAISwarm::Logger.instance.logger
+    # end
 
     def log_message(level, message, data = nil)
       return unless @logger
