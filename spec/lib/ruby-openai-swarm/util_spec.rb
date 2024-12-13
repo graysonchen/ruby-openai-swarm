@@ -2,7 +2,55 @@ require 'spec_helper'
 require 'ruby-openai-swarm/util'
 
 RSpec.describe OpenAISwarm::Util do
+  describe ".clean_messages" do
+    let(:excluded_tool_name) { ['transfer_to_conversion_funnel_analytics_agent', 'triage_agent'] }
+    let(:messages) do
+      [
+        {
+          :role=>"system",
+          :content=>"# sssssxxxxxxx"
+        },
+        {
+          :role=>"user",
+          :content=>"hello ruby"
+        },
+        {
+          "role"=>"assistant",
+          "content"=>nil,
+          "refusal"=>nil,
+          "tool_calls"=>[
+            {
+              "index"=>0,
+              "id"=>"call_uktHqxS5o2phsVg6khesfmyq",
+              "type"=>"function",
+              "function"=>{
+                "name"=>"transfer_to_conversion_funnel_analytics_agent",
+                "arguments"=>"{}"
+              }
+            }
+          ],
+        },
+        {
+          "role"=>"tool",
+          "tool_call_id"=>"call_uktHqxS5o2phsVg6khesfmyq",
+          "tool_name"=>"transfer_to_conversion_funnel_analytics_agent",
+          "content"=>"{\"assistant\":\"Conversion Funnel Analytics Agent\"}"
+        }
+      ]
+    end
+    let(:clearn_messages) { OpenAISwarm::Util.clean_messages(messages, excluded_tool_name) }
+    describe 'filter message' do
+      it do
+        expect(clearn_messages).to eq([{:role=>"system", :content=>"# sssssxxxxxxx"}, {:role=>"user", :content=>"hello ruby"}])
+      end
+    end
 
+    describe 'when excluded_tool_name is empty' do
+      let(:excluded_tool_name) { [] }
+
+      it { expect(clearn_messages).to eq messages }
+    end
+  end
 
   describe ".merge_chunk" do
     let(:completion) do

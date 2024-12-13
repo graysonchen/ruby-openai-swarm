@@ -30,3 +30,4 @@ build-iPhoneSimulator/
 
 # rspec failure tracking
 .rspec_status
+log/openai_swarm.log

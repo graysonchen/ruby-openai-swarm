@@ -7,6 +7,20 @@ module OpenAISwarm
       puts "\e[97m[\e[90m#{timestamp}\e[97m]\e[90m #{message}\e[0m"
     end
 
+    def self.clean_messages(messages, excluded_tool_name = [])
+      messages.reject do |message|
+        if message['role'] == 'tool'
+          excluded_tool_name.include?(message['tool_name'])
+        elsif message['role'] == 'assistant' && message['tool_calls']
+          message['tool_calls'].any? { |tool_call|
+          excluded_tool_name.include?(tool_call['function']['name'])
+          }
+        else
+          false
+        end
+      end
+    end
+
     def self.message_template(agent_name)
       {
         "content" => "",
