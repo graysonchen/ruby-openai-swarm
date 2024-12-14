@@ -20,9 +20,6 @@ module OpenAISwarm
 
     def self.clean_message_tools(messages, tool_names)
       return messages if tool_names.empty?
-      # filtered_messages = Marshal.load(Marshal.dump(messages))
-
-      # filtered_messages = messages.dup.map { |message| message.deep_transform_keys(&:to_s) }
       filtered_messages = symbolize_keys_to_string(messages.dup)
       # Marshal.load(Marshal.dump(messages))
 
