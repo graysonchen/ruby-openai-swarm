@@ -7,18 +7,54 @@ module OpenAISwarm
       puts "\e[97m[\e[90m#{timestamp}\e[97m]\e[90m #{message}\e[0m"
     end
 
-    def self.clean_messages(messages, excluded_tool_name = [])
-      messages.reject do |message|
-        if message['role'] == 'tool'
-          excluded_tool_name.include?(message['tool_name'])
-        elsif message['role'] == 'assistant' && message['tool_calls']
-          message['tool_calls'].any? { |tool_call|
-          excluded_tool_name.include?(tool_call['function']['name'])
-          }
+    def self.symbolize_keys_to_string(obj)
+      case obj
+      when Hash
+        obj.transform_keys(&:to_s).transform_values { |v| symbolize_keys_to_string(v) }
+      when Array
+        obj.map { |v| symbolize_keys_to_string(v) }
+      else
+        obj
+      end
+    end
+
+    def self.clean_message_tools(messages, tool_names)
+      return messages if tool_names.empty?
+      # filtered_messages = Marshal.load(Marshal.dump(messages))
+
+      # filtered_messages = messages.dup.map { |message| message.deep_transform_keys(&:to_s) }
+      filtered_messages = symbolize_keys_to_string(messages.dup)
+      # Marshal.load(Marshal.dump(messages))
+
+      # binding.pry
+      # Collect tool call IDs to be removed
+      tool_call_ids_to_remove = filtered_messages
+        .select { |msg| msg['tool_calls'] }
+        .flat_map { |msg| msg['tool_calls'] }
+        .select { |tool_call| tool_names.include?(tool_call['function']['name']) }
+        .map { |tool_call| tool_call['id'] }
+
+      # Remove specific messages
+      filtered_messages.reject! do |msg|
+        # Remove tool call messages for specified tool names
+        (msg['role'] == 'assistant' &&
+         msg['tool_calls']&.all? { |tool_call| tool_names.include?(tool_call['function']['name']) }) ||
+        # Remove tool response messages for specified tool calls
+        (msg['role'] == 'tool' && tool_call_ids_to_remove.include?(msg['tool_call_id']))
+      end
+
+      # If assistant message's tool_calls becomes empty, modify that message
+      filtered_messages.map! do |msg|
+        if msg['role'] == 'assistant' && msg['tool_calls']
+          msg['tool_calls'].reject! { |tool_call| tool_names.include?(tool_call['function']['name']) }
+          msg['tool_calls'] = nil if msg['tool_calls'].empty?
+          msg
         else
-          false
+          msg
         end
       end
+
+      filtered_messages
     end
 
     def self.message_template(agent_name)

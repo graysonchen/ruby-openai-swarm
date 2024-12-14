@@ -29,9 +29,12 @@ module OpenAISwarm
         params[:required]&.delete(CTX_VARS_NAME.to_sym)
       end
 
+      excluded_tool_name = ['transfer_to_conversion_funnel_analytics_agent', 'triage_agent']
+      cleaned_messages = OpenAISwarm::Util.clean_message_tools(messages, excluded_tool_name)
+
       create_params = {
         model: model_override || agent.model,
-        messages: messages,
+        messages: cleaned_messages,
         tools: tools.empty? ? nil : tools,
       }
 
