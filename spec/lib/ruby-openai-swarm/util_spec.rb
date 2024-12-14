@@ -2,8 +2,6 @@ require 'spec_helper'
 require 'ruby-openai-swarm/util'
 
 RSpec.describe OpenAISwarm::Util do
-
-
   describe ".merge_chunk" do
     let(:completion) do
       [

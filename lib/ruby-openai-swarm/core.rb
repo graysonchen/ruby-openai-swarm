@@ -29,9 +29,11 @@ module OpenAISwarm
         params[:required]&.delete(CTX_VARS_NAME.to_sym)
       end
 
+      cleaned_messages = OpenAISwarm::Util.clean_message_tools(messages, agent.noisy_tool_calls)
+
       create_params = {
         model: model_override || agent.model,
-        messages: messages,
+        messages: cleaned_messages,
         tools: tools.empty? ? nil : tools,
       }
 
