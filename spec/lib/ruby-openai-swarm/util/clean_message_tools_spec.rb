@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'ruby-openai-swarm/util'
 
 RSpec.describe OpenAISwarm::Util do
-# Sample messages for testing
+  # Sample messages for testing
   let(:sample_messages) do
     [
       {
