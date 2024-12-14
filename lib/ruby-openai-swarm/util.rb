@@ -21,9 +21,6 @@ module OpenAISwarm
     def self.clean_message_tools(messages, tool_names)
       return messages if tool_names.empty?
       filtered_messages = symbolize_keys_to_string(messages.dup)
-      # Marshal.load(Marshal.dump(messages))
-
-      # binding.pry
       # Collect tool call IDs to be removed
       tool_call_ids_to_remove = filtered_messages
         .select { |msg| msg['tool_calls'] }
