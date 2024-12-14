@@ -100,7 +100,6 @@ RSpec.describe OpenAISwarm::Util do
   context 'when removing both get_weather and get_news tools' do
     it 'removes all tool calls and tool responses' do
       result = described_class.clean_message_tools(sample_messages, ['get_weather', 'get_news'])
-      # binding.pry
       # Check the structure of the result
       expect(result.length).to eq(2)
       # Check that only system and user messages remain
