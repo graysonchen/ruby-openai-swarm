@@ -1,6 +1,7 @@
 require 'ruby-openai-swarm/version'
 require 'ruby-openai-swarm/core_ext'
 require 'ruby-openai-swarm/agent'
+require 'ruby-openai-swarm/agent_change_tracker'
 require 'ruby-openai-swarm/response'
 require 'ruby-openai-swarm/result'
 require 'ruby-openai-swarm/util'
