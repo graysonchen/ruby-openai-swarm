@@ -14,7 +14,8 @@ module OpenAISwarm
       @logger = OpenAISwarm::Logger.instance.logger
     end
 
-    def get_chat_completion(agent, history, context_variables, model_override, stream, debug)
+    def get_chat_completion(agent_tracker, history, context_variables, model_override, stream, debug)
+      agent = agent_tracker.current_agent
       context_variables = context_variables.dup
       instructions = agent.instructions.respond_to?(:call) ? agent.instructions.call(context_variables) : agent.instructions
       messages = [{ role: 'system', content: instructions }] + history
@@ -158,15 +159,15 @@ module OpenAISwarm
           execute_tools: execute_tools
         )
       end
-
-      active_agent = agent
+      agent_tracker = OpenAISwarm::AgentChangeTracker.new(agent)
+      # active_agent = agent_tracker.current_agent
       context_variables = context_variables.dup
       history = messages.dup
       init_len = messages.length
 
-      while history.length - init_len < max_turns && active_agent
+      while history.length - init_len < max_turns && agent_tracker.current_agent
         completion = get_chat_completion(
-          active_agent,
+          agent_tracker,
           history,
           context_variables,
           model_override,
@@ -178,7 +179,7 @@ module OpenAISwarm
         Util.debug_print(debug, "Received completion:", message)
         log_message(:info, "Received completion:", message)
 
-        message['sender'] = active_agent.name
+        message['sender'] = agent_tracker.current_agent.name
         history << message
 
         if !message['tool_calls'] || !execute_tools
@@ -188,19 +189,22 @@ module OpenAISwarm
 
         partial_response = handle_tool_calls(
           message['tool_calls'],
-          active_agent,
+          agent_tracker.current_agent,
           context_variables,
           debug
         )
 
         history.concat(partial_response.messages)
         context_variables.merge!(partial_response.context_variables)
-        active_agent = partial_response.agent if partial_response.agent
+        if partial_response.agent
+          agent_tracker.update(partial_response.agent)
+          # active_agent = agent_tracker.current_agent
+        end
       end
 
       Response.new(
         messages: history[init_len..],
-        agent: active_agent,
+        agent: agent_tracker.current_agent,
         context_variables: context_variables
       )
     end
