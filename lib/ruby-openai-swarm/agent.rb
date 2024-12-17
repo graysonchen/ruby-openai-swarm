@@ -4,6 +4,7 @@ module OpenAISwarm
                   :functions, :tool_choice,
                   :parallel_tool_calls,
                   :noisy_tool_calls,
+                  :temperature,
                   :resource
     # These attributes can be read and written externally. They include:
     # - name: The name of the agent.
@@ -19,6 +20,7 @@ module OpenAISwarm
       instructions: "You are a helpful agent.",
       functions: [],
       tool_choice: nil,
+      temperature: nil,
       parallel_tool_calls: true,
       resource: nil,
       noisy_tool_calls: []
@@ -28,6 +30,7 @@ module OpenAISwarm
       @instructions = instructions
       @functions = functions
       @tool_choice = tool_choice
+      @temperature = temperature
       @parallel_tool_calls = parallel_tool_calls
       @resource = resource
       @noisy_tool_calls = noisy_tool_calls

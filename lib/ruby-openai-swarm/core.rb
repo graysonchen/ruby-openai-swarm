@@ -41,6 +41,7 @@ module OpenAISwarm
       # create_params[:functions] = tools unless tools.empty?
       # create_params[:function_call] = agent.tool_choice if agent.tool_choice
 
+      create_params[:temperature] = agent.temperature if agent.temperature
       create_params[:tool_choice] = agent.tool_choice if agent.tool_choice
       create_params[:parallel_tool_calls] = agent.parallel_tool_calls if tools.any?
 
