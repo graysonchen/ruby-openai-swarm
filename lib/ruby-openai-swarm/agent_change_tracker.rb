@@ -12,7 +12,7 @@ module OpenAISwarm
     end
 
     def agent_changed?
-      @previous_agent&.name != @current_agent&.name
+      previous_agent&.name != current_agent&.name
     end
   end
 end
