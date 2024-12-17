@@ -18,9 +18,21 @@ module OpenAISwarm
       agent = agent_tracker.current_agent
       context_variables = context_variables.dup
       instructions = agent.instructions.respond_to?(:call) ? agent.instructions.call(context_variables) : agent.instructions
-      messages = [{ role: 'system', content: instructions }] + history
 
+
+      # cleaned_history =
+      #   if agent_tracker.agent_changed?
+      #     [history.first]
+      #   else
+      #     history
+      #   end
+
+      messages = [{ role: 'system', content: instructions }] + history
+      puts "agent_tracker.agent_changed?: #{agent_tracker.agent_changed?}"
+      puts "history: - #{history}"
       # Util.debug_print(debug, "Getting chat completion for...:", messages)
+
+
 
       tools = agent.functions.map { |f| Util.function_to_json(f) }
       # hide context_variables from model
@@ -148,6 +160,7 @@ module OpenAISwarm
     end
 
     def run(agent:, messages:, context_variables: {}, model_override: nil, stream: false, debug: false, max_turns: Float::INFINITY, execute_tools: true)
+      agent_tracker = OpenAISwarm::AgentChangeTracker.new(agent)
       if stream
         return run_and_stream(
           agent: agent,
@@ -159,15 +172,27 @@ module OpenAISwarm
           execute_tools: execute_tools
         )
       end
-      agent_tracker = OpenAISwarm::AgentChangeTracker.new(agent)
-      # active_agent = agent_tracker.current_agent
+
+      active_agent = agent
       context_variables = context_variables.dup
       history = messages.dup
       init_len = messages.length
 
-      while history.length - init_len < max_turns && agent_tracker.current_agent
+      while history.length - init_len < max_turns && active_agent
+        agent_tracker.update(active_agent)
+
+        puts "completion: agent_tracker: #{agent_tracker.agent_changed?} | - #{agent_tracker.current_agent&.name} vs #{agent_tracker.previous_agent&.name}"
+        puts "agent_tracker == active_agent:  - #{agent_tracker.current_agent&.name} vs #{active_agent&.name}"
+        # puts "history: - #{history}"
+
+      # cleaned_history =
+        if agent_tracker.agent_changed?
+          history = [history.first]
+        end
+
         completion = get_chat_completion(
           agent_tracker,
+          # active_agent,
           history,
           context_variables,
           model_override,
@@ -179,7 +204,7 @@ module OpenAISwarm
         Util.debug_print(debug, "Received completion:", message)
         log_message(:info, "Received completion:", message)
 
-        message['sender'] = agent_tracker.current_agent.name
+        message['sender'] = active_agent.name
         history << message
 
         if !message['tool_calls'] || !execute_tools
@@ -189,22 +214,19 @@ module OpenAISwarm
 
         partial_response = handle_tool_calls(
           message['tool_calls'],
-          agent_tracker.current_agent,
+          active_agent,
           context_variables,
           debug
         )
 
         history.concat(partial_response.messages)
         context_variables.merge!(partial_response.context_variables)
-        if partial_response.agent
-          agent_tracker.update(partial_response.agent)
-          # active_agent = agent_tracker.current_agent
-        end
+        active_agent = partial_response.agent if partial_response.agent
       end
 
       Response.new(
         messages: history[init_len..],
-        agent: agent_tracker.current_agent,
+        agent: active_agent,
         context_variables: context_variables
       )
     end
