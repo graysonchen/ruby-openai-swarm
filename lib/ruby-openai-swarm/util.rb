@@ -8,9 +8,9 @@ module OpenAISwarm
         last_user_message ? [last_user_message] : history
       end
 
-      def request_tools_excluded(tools, tool_names, interrupt_loop = false)
+      def request_tools_excluded(tools, tool_names, prevent_agent_reentry = false)
         return nil if tools.empty?
-        return tools if tool_names.empty? || !interrupt_loop
+        return tools if tool_names.empty? || !prevent_agent_reentry
 
         symbolize_keys_to_string(tools).reject do |tool|
           tool_names.include?("#{tool['function']['name']}")
