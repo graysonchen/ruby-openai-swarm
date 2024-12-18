@@ -14,5 +14,9 @@ module OpenAISwarm
     def agent_changed?
       previous_agent&.name != current_agent&.name
     end
+
+    def switch_agent_reset_message?
+      agent_changed? && current_agent.strategy.switch_agent_reset_message
+    end
   end
 end

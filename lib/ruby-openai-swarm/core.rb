@@ -186,7 +186,7 @@ module OpenAISwarm
         # puts "history: - #{history}"
 
       # cleaned_history =
-        if agent_tracker.agent_changed?
+        if agent_tracker.switch_agent_reset_message?
           history = [history.first]
         end
 
