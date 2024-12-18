@@ -6,6 +6,7 @@ module OpenAISwarm
                   :strategy,
                   :noisy_tool_calls,
                   :temperature,
+                  :current_tool_name,
                   :resource
     # These attributes can be read and written externally. They include:
     # - name: The name of the agent.
@@ -25,7 +26,8 @@ module OpenAISwarm
       parallel_tool_calls: true,
       resource: nil,
       noisy_tool_calls: [],
-      strategy: {}
+      strategy: {},
+      current_tool_name: nil
     )
       @name = name
       @model = model
@@ -37,6 +39,7 @@ module OpenAISwarm
       @resource = resource
       @noisy_tool_calls = noisy_tool_calls
       @strategy = Agents::StrategyOptions.new(strategy)
+      @current_tool_name = current_tool_name.nil? ? nil : current_tool_name.to_s
     end
   end
 end

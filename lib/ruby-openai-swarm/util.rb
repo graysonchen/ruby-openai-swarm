@@ -7,7 +7,16 @@ module OpenAISwarm
         last_user_message = filtered_messages.reverse.find { |msg| msg['role'] == 'user' }
         last_user_message ? [last_user_message] : history
       end
+
+      def excluded_tools(tools, tool_names)
+        return tools if tool_names.empty?
+
+        symbolize_keys_to_string(tools).reject do |tool|
+          tool_names.include?("#{tool['function']['name']}")
+        end
+      end
     end
+
     def self.debug_print(debug, *args)
       return unless debug
       timestamp = Time.now.strftime("%Y-%m-%d %H:%M:%S")
