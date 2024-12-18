@@ -14,7 +14,8 @@ module OpenAISwarm
       @logger = OpenAISwarm::Logger.instance.logger
     end
 
-    def get_chat_completion(agent, history, context_variables, model_override, stream, debug)
+    def get_chat_completion(agent_tracker, history, context_variables, model_override, stream, debug)
+      agent = agent_tracker.current_agent
       context_variables = context_variables.dup
       instructions = agent.instructions.respond_to?(:call) ? agent.instructions.call(context_variables) : agent.instructions
       messages = [{ role: 'system', content: instructions }] + history
@@ -147,6 +148,7 @@ module OpenAISwarm
     end
 
     def run(agent:, messages:, context_variables: {}, model_override: nil, stream: false, debug: false, max_turns: Float::INFINITY, execute_tools: true)
+      agent_tracker = OpenAISwarm::AgentChangeTracker.new(agent)
       if stream
         return run_and_stream(
           agent: agent,
@@ -165,8 +167,11 @@ module OpenAISwarm
       init_len = messages.length
 
       while history.length - init_len < max_turns && active_agent
+        agent_tracker.update(active_agent)
+        history = [history.first] if agent_tracker.switch_agent_reset_message?
+
         completion = get_chat_completion(
-          active_agent,
+          agent_tracker,
           history,
           context_variables,
           model_override,
@@ -205,16 +210,21 @@ module OpenAISwarm
       )
     end
 
+    # TODO(Grayson): a lot of copied code here that will be refactored
     def run_and_stream(agent:, messages:, context_variables: {}, model_override: nil, debug: false, max_turns: Float::INFINITY, execute_tools: true)
+      agent_tracker = OpenAISwarm::AgentChangeTracker.new(agent)
       active_agent = agent
       context_variables = context_variables.dup
       history = messages.dup
       init_len = messages.length
 
       while history.length - init_len < max_turns && active_agent
+        agent_tracker.update(active_agent)
+        history = [history.first] if agent_tracker.switch_agent_reset_message?
+
         message = OpenAISwarm::Util.message_template(agent.name)
         completion = get_chat_completion(
-          active_agent,
+          agent_tracker,
           history,
           context_variables,
           model_override,

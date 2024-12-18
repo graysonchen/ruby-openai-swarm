@@ -3,6 +3,7 @@ module OpenAISwarm
     attr_accessor :name, :model, :instructions,
                   :functions, :tool_choice,
                   :parallel_tool_calls,
+                  :strategy,
                   :noisy_tool_calls,
                   :temperature,
                   :resource
@@ -23,7 +24,8 @@ module OpenAISwarm
       temperature: nil,
       parallel_tool_calls: true,
       resource: nil,
-      noisy_tool_calls: []
+      noisy_tool_calls: [],
+      strategy: {}
     )
       @name = name
       @model = model
@@ -34,6 +36,7 @@ module OpenAISwarm
       @parallel_tool_calls = parallel_tool_calls
       @resource = resource
       @noisy_tool_calls = noisy_tool_calls
+      @strategy = AgentStrategyOptions.new(strategy)
     end
   end
 end
