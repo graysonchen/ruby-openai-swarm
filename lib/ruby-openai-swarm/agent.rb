@@ -36,7 +36,7 @@ module OpenAISwarm
       @parallel_tool_calls = parallel_tool_calls
       @resource = resource
       @noisy_tool_calls = noisy_tool_calls
-      @strategy = AgentStrategyOptions.new(strategy)
+      @strategy = Agents::StrategyOptions.new(strategy)
     end
   end
 end

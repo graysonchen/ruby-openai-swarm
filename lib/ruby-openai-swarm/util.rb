@@ -1,5 +1,13 @@
 module OpenAISwarm
   module Util
+    class << self
+      def latest_role_user_message(history)
+        return history if history.empty?
+        filtered_messages = symbolize_keys_to_string(history.dup)
+        last_user_message = filtered_messages.reverse.find { |msg| msg['role'] == 'user' }
+        last_user_message ? [last_user_message] : history
+      end
+    end
     def self.debug_print(debug, *args)
       return unless debug
       timestamp = Time.now.strftime("%Y-%m-%d %H:%M:%S")
