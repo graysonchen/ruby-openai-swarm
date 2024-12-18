@@ -35,7 +35,7 @@ module OpenAISwarm
       create_params = {
         model: model_override || agent.model,
         messages: cleaned_messages,
-        tools: Util.request_tools_excluded(tools, agent_tracker.tracking_agents_tool_name, agent_tracker.strategy.prevent_agent_reentry),
+        tools: Util.request_tools_excluded(tools, agent_tracker.tracking_agents_tool_name, agent.strategy.prevent_agent_reentry),
       }
 
       # TODO: https://platform.openai.com/docs/guides/function-calling/how-do-functions-differ-from-tools
