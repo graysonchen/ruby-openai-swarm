@@ -297,6 +297,11 @@ module OpenAISwarm
           debug
         )
 
+        if partial_response.agent
+          agent_tool_name = message['tool_calls'].dig(0, 'function', 'name')
+          agent_tracker.add_tracking_agents_tool_name(agent_tool_name)
+        end
+
         history.concat(partial_response.messages)
         context_variables.merge!(partial_response.context_variables)
         active_agent = partial_response.agent if partial_response.agent
