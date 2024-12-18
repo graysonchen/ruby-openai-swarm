@@ -30,12 +30,12 @@ module OpenAISwarm
         params[:required]&.delete(CTX_VARS_NAME.to_sym)
       end
 
-      cleaned_messages = OpenAISwarm::Util.clean_message_tools(messages, agent.noisy_tool_calls)
+      cleaned_messages = Util.clean_message_tools(messages, agent.noisy_tool_calls)
 
       create_params = {
         model: model_override || agent.model,
         messages: cleaned_messages,
-        tools: tools.empty? ? nil : tools,
+        tools: Util.request_tools_excluded(tools, agent_tracker.tracking_agents_tool_name, agent.strategy.prevent_agent_reentry),
       }
 
       # TODO: https://platform.openai.com/docs/guides/function-calling/how-do-functions-differ-from-tools
@@ -198,6 +198,11 @@ module OpenAISwarm
           debug
         )
 
+        if partial_response.agent
+          agent_tool_name = message['tool_calls'].dig(0, 'function', 'name')
+          agent_tracker.add_tracking_agents_tool_name(agent_tool_name)
+        end
+
         history.concat(partial_response.messages)
         context_variables.merge!(partial_response.context_variables)
         active_agent = partial_response.agent if partial_response.agent
@@ -289,6 +294,11 @@ module OpenAISwarm
           context_variables,
           debug
         )
+
+        if partial_response.agent
+          agent_tool_name = message['tool_calls'].dig(0, 'function', 'name')
+          agent_tracker.add_tracking_agents_tool_name(agent_tool_name)
+        end
 
         history.concat(partial_response.messages)
         context_variables.merge!(partial_response.context_variables)
