@@ -49,8 +49,6 @@ module OpenAISwarm
       Util.debug_print(debug, "Getting chat completion for...:", create_params)
       log_message(:info, "Getting chat completion for...:", create_params)
 
-      puts "tracking_agents_tool_name:  #{agent_tracker.tracking_agents_tool_name}"
-
       if stream
         return Enumerator.new do |yielder|
           @client.chat(parameters: create_params.merge(
