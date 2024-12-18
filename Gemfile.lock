@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    ruby-openai-swarm (0.2.9)
+    ruby-openai-swarm (0.3.0)
       ruby-openai (~> 7.3)
 
 GEM
@@ -15,8 +15,8 @@ GEM
       base64
       faraday-net_http (>= 2.0, < 3.1)
       ruby2_keywords (>= 0.0.4)
-    faraday-multipart (1.0.4)
-      multipart-post (~> 2)
+    faraday-multipart (1.1.0)
+      multipart-post (~> 2.0)
     faraday-net_http (3.0.2)
     method_source (1.1.0)
     multipart-post (2.4.1)

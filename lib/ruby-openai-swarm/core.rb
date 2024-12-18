@@ -18,21 +18,9 @@ module OpenAISwarm
       agent = agent_tracker.current_agent
       context_variables = context_variables.dup
       instructions = agent.instructions.respond_to?(:call) ? agent.instructions.call(context_variables) : agent.instructions
-
-
-      # cleaned_history =
-      #   if agent_tracker.agent_changed?
-      #     [history.first]
-      #   else
-      #     history
-      #   end
-
       messages = [{ role: 'system', content: instructions }] + history
-      puts "agent_tracker.agent_changed?: #{agent_tracker.agent_changed?}"
-      puts "history: - #{history}"
+
       # Util.debug_print(debug, "Getting chat completion for...:", messages)
-
-
 
       tools = agent.functions.map { |f| Util.function_to_json(f) }
       # hide context_variables from model
@@ -181,18 +169,12 @@ module OpenAISwarm
       while history.length - init_len < max_turns && active_agent
         agent_tracker.update(active_agent)
 
-        puts "completion: agent_tracker: #{agent_tracker.agent_changed?} | - #{agent_tracker.current_agent&.name} vs #{agent_tracker.previous_agent&.name}"
-        puts "agent_tracker == active_agent:  - #{agent_tracker.current_agent&.name} vs #{active_agent&.name}"
-        # puts "history: - #{history}"
-
-      # cleaned_history =
         if agent_tracker.switch_agent_reset_message?
           history = [history.first]
         end
 
         completion = get_chat_completion(
           agent_tracker,
-          # active_agent,
           history,
           context_variables,
           model_override,
