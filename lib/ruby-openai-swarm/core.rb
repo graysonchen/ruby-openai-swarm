@@ -203,14 +203,6 @@ module OpenAISwarm
         if partial_response.agent
           agent_tool_name = message['tool_calls'].dig(0, 'function', 'name')
           agent_tracker.add_tracking_agents_tool_name(agent_tool_name)
-
-          # agent_tracker.push_agent_tool_call_name
-          # debugger
-          puts "1 agent >>>>>>>>>>> message['tool_calls']: #{message['tool_calls']}"
-          puts "1 agent >>>>>>>>>>> partial_response.agent: #{partial_response&.agent&.name}"
-        else
-          puts "2>>>>>>>>>>> message['tool_calls']: #{message['tool_calls']}"
-          puts "2>>>>>>>>>>> partial_response.agent: #{partial_response&.agent&.name}"
         end
 
         history.concat(partial_response.messages)
