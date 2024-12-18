@@ -7,7 +7,7 @@ RSpec.describe OpenAISwarm::AgentChangeTracker do
   describe '#initialize' do
     it 'sets the current agent and nil as previous agent' do
       tracker = described_class.new(agent1)
-      
+
       expect(tracker.current_agent).to eq(agent1)
       expect(tracker.previous_agent).to be_nil
     end
@@ -17,7 +17,7 @@ RSpec.describe OpenAISwarm::AgentChangeTracker do
     it 'updates current agent and moves old current to previous' do
       tracker = described_class.new(agent1)
       tracker.update(agent2)
-      
+
       expect(tracker.current_agent).to eq(agent2)
       expect(tracker.previous_agent).to eq(agent1)
     end
@@ -46,4 +46,4 @@ RSpec.describe OpenAISwarm::AgentChangeTracker do
       end
     end
   end
-end 
+end
