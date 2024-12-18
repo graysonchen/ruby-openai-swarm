@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe OpenAISwarm::AgentChangeTracker do
+RSpec.describe OpenAISwarm::Agents::ChangeTracker do
   let(:agent1) { OpenAISwarm::Agent.new(name: "agent1") }
   let(:agent2) { OpenAISwarm::Agent.new(name: "agent2") }
 
