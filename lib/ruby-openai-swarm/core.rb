@@ -168,10 +168,7 @@ module OpenAISwarm
 
       while history.length - init_len < max_turns && active_agent
         agent_tracker.update(active_agent)
-
-        if agent_tracker.switch_agent_reset_message?
-          history = [history.first]
-        end
+        history = [history.first] if agent_tracker.switch_agent_reset_message?
 
         completion = get_chat_completion(
           agent_tracker,
@@ -213,16 +210,21 @@ module OpenAISwarm
       )
     end
 
+    # TODO(Grayson): a lot of copied code here that will be refactored
     def run_and_stream(agent:, messages:, context_variables: {}, model_override: nil, debug: false, max_turns: Float::INFINITY, execute_tools: true)
+      agent_tracker = OpenAISwarm::AgentChangeTracker.new(agent)
       active_agent = agent
       context_variables = context_variables.dup
       history = messages.dup
       init_len = messages.length
 
       while history.length - init_len < max_turns && active_agent
+        agent_tracker.update(active_agent)
+        history = [history.first] if agent_tracker.switch_agent_reset_message?
+
         message = OpenAISwarm::Util.message_template(agent.name)
         completion = get_chat_completion(
-          active_agent,
+          agent_tracker,
           history,
           context_variables,
           model_override,
