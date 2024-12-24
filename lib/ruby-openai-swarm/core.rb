@@ -51,9 +51,11 @@ module OpenAISwarm
 
       if stream
         return Enumerator.new do |yielder|
+          yielder << { parameters: create_params }
+          
           @client.chat(parameters: create_params.merge(
             stream: proc do |chunk, _bytesize|
-              yielder << chunk
+              yielder << { chunk: chunk }
             end
           ))
         end
