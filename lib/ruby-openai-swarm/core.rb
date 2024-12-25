@@ -240,7 +240,12 @@ module OpenAISwarm
         )
 
         yield({ delim: "start" }) if block_given?
-        completion.each do |chunk|
+        completion.each do |stream|
+           
+          yield({ parameters: stream[:parameters] }) if block_given?
+          next if stream[:parameters]
+          
+          chunk = stream[:chunk]
           if chunk['error']
             details = {
               'response' =>
