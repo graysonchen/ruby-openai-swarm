@@ -52,7 +52,7 @@ module OpenAISwarm
       if stream
         return Enumerator.new do |yielder|
           yielder << { parameters: create_params }
-          
+
           @client.chat(parameters: create_params.merge(
             stream: proc do |chunk, _bytesize|
               yielder << { chunk: chunk }
@@ -241,10 +241,13 @@ module OpenAISwarm
 
         yield({ delim: "start" }) if block_given?
         completion.each do |stream|
-           
-          yield({ parameters: stream[:parameters] }) if block_given?
+
+          # TODO(Grayson): will refactor it
+          if stream[:parameters]
+            yield({ parameters: stream[:parameters] }) if block_given?
+          end
           next if stream[:parameters]
-          
+
           chunk = stream[:chunk]
           if chunk['error']
             details = {
