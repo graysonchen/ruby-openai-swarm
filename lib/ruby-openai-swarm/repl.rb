@@ -4,21 +4,24 @@ module OpenAISwarm
       def process_and_print_streaming_response(response)
         content = []
         last_sender = ""
-        response.each do |chunk|
-          last_sender = chunk['sender'] if chunk.key?('sender')
+        response.each do |stream|
+          delta = stream['delta']
+          if delta
+            last_sender = delta['sender'] if delta.key?('sender')
 
-          if chunk.key?("content") && !chunk["content"].nil?
-            if content.empty? && !last_sender.empty?
-              puts
-              print "\033[94m#{last_sender}:\033[0m "
-              last_sender = ""
+            if delta.key?("content") && !delta["content"].nil?
+              if content.empty? && !last_sender.empty?
+                puts
+                print "\033[94m#{last_sender}:\033[0m "
+                last_sender = ""
+              end
+              print delta["content"]
+              content << delta["content"]
             end
-            print chunk["content"]
-            content << chunk["content"]
           end
 
-          if chunk.key?("tool_calls") && !chunk["tool_calls"].nil?
-            chunk["tool_calls"].each do |tool_call|
+          if stream.key?("tool_calls") && !stream["tool_calls"].nil?
+            stream["tool_calls"].each do |tool_call|
               f = tool_call["function"]
               name = f["name"]
               next if name.nil?
@@ -26,11 +29,11 @@ module OpenAISwarm
             end
           end
 
-          if chunk.key?("delim") && chunk["delim"] == "end" && !content.empty?
+          if stream.key?("delim") && stream["delim"] == "end" && !content.empty?
             puts
             content = ""
           end
-          return chunk["response"] if chunk.key?("response")
+          return stream["response"] if stream.key?("response")
         end
       end
 

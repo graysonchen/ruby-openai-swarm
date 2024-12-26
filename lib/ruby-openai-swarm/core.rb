@@ -51,9 +51,11 @@ module OpenAISwarm
 
       if stream
         return Enumerator.new do |yielder|
+          yielder << { 'parameters' => create_params }
+
           @client.chat(parameters: create_params.merge(
             stream: proc do |chunk, _bytesize|
-              yielder << chunk
+              yielder << { chunk: chunk }
             end
           ))
         end
@@ -238,7 +240,15 @@ module OpenAISwarm
         )
 
         yield({ delim: "start" }) if block_given?
-        completion.each do |chunk|
+        completion.each do |stream|
+
+          # TODO(Grayson): will refactor it
+          if stream['parameters']
+            yield({ 'parameters' => stream['parameters'] }) if block_given?
+          end
+          next if stream.key?('parameters')
+
+          chunk = stream[:chunk]
           if chunk['error']
             details = {
               'response' =>
@@ -255,7 +265,7 @@ module OpenAISwarm
             delta['sender'] = active_agent.name
           end
 
-          yield delta if block_given?
+          yield({ 'delta' => delta })  if block_given?
 
           delta.delete('role')
           delta.delete('sender')
