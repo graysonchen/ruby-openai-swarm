@@ -244,7 +244,7 @@ module OpenAISwarm
 
           # TODO(Grayson): will refactor it
           if stream['parameters']
-            yield({ 'parameters' => stream['parameters'] }) if block_given?
+            yield({ 'parameters' => stream['parameters'], 'agent' => active_agent&.name }) if block_given?
           end
           next if stream.key?('parameters')
 
