@@ -16,7 +16,7 @@ A Ruby-based educational framework adapted from OpenAI’s [Swarm](https://githu
     - [Bundler](#bundler)
     - [Gem install](#gem-install)
     - [Logger](#logger)
-  - [Quick start](##quick-start)
+  - [Quick start](#quick-start)
   - [Documentation](#documentation)
 
 ## quick show
