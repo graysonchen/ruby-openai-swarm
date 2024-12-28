@@ -7,7 +7,7 @@ def spanish_agent
   OpenAISwarm::Agent.new(
     name: "Spanish Agent",
     instructions: "You only speak Spanish.",
-    model: "gpt-4o-mini"
+    model: ENV['SWARM_AGENT_DEFAULT_MODEL']
   )
 end
 
@@ -19,7 +19,7 @@ transfer_to_spanish_agent = OpenAISwarm::FunctionDescriptor.new(
 english_agent = OpenAISwarm::Agent.new(
   name: "English Agent",
   instructions: "You only speak English.",
-  model: "gpt-4o-mini",
+  model: ENV['SWARM_AGENT_DEFAULT_MODEL'],
   functions: [transfer_to_spanish_agent]
 )
 

@@ -27,7 +27,7 @@ get_weather_instance = OpenAISwarm::FunctionDescriptor.new(
 agent = OpenAISwarm::Agent.new(
   name: "Agent",
   instructions: "You are a helpful agent.",
-  model: "gpt-4o-mini",
+  model: ENV['SWARM_AGENT_DEFAULT_MODEL'],
   functions: [
     get_weather_instance,
     get_news_instance
