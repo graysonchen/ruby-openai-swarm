@@ -6,7 +6,7 @@ client = OpenAISwarm.new
 agent = OpenAISwarm::Agent.new(
   name: "Agent",
   instructions: "You are a helpful agent.",
-  model: "gpt-4o-mini"
+  model: ENV['SWARM_AGENT_DEFAULT_MODEL']
 )
 messages = [{"role": "user", "content": "Hi!"}]
 response = client.run(agent: agent, messages: messages)

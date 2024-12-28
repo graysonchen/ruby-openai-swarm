@@ -16,7 +16,7 @@ A Ruby-based educational framework adapted from OpenAI’s [Swarm](https://githu
     - [Bundler](#bundler)
     - [Gem install](#gem-install)
     - [Logger](#logger)
-  - [examples](#examples)
+  - [Quick start](##quick-start)
   - [Documentation](#documentation)
 
 ## quick show
@@ -86,7 +86,7 @@ def spanish_agent
   OpenAISwarm::Agent.new(
     name: "Spanish Agent",
     instructions: "You only speak Spanish.",
-    model: "gpt-4o-mini"
+    model: ENV['SWARM_AGENT_DEFAULT_MODEL']
   )
 end
 
@@ -98,7 +98,7 @@ transfer_to_spanish_agent = OpenAISwarm::FunctionDescriptor.new(
 english_agent = OpenAISwarm::Agent.new(
   name: "English Agent",
   instructions: "You only speak English.",
-  model: "gpt-4o-mini",
+  model: ENV['SWARM_AGENT_DEFAULT_MODEL'],
   functions: [transfer_to_spanish_agent]
 )
 
@@ -127,9 +127,20 @@ OpenAISwarm.configure do |config|
 end
 ```
 
-# Examples
+## Quick Start
 
-Setting ACCESS_TOKEN for AI Providers in examples
+### Choose the default model name
+
+export SWARM_AGENT_DEFAULT_MODEL=gpt-4o-mini
+
+or
+
+export SWARM_AGENT_DEFAULT_MODEL=deepseek-chat
+
+DeepSeek V3 is 1/10 price of gpt-4o-mini, so try it!
+
+
+### Setting ACCESS_TOKEN for AI Providers in examples
 
 - For OpenRouter:
 
@@ -139,7 +150,11 @@ Setting ACCESS_TOKEN for AI Providers in examples
 
   `OPENAI_ACCESS_TOKEN=cxxxxx` or `export OPENAI_ACCESS_TOKEN=cxxxxx`
 
-Check out `/examples` for inspiration! Learn more about each one in its README.
+- For DeepSeek:
+
+  `DEEPSEEK_ACCESS_TOKEN=cxxxxx` or `export DEEPSEEK_ACCESS_TOKEN=cxxxxx`
+
+### Check out `/examples` for inspiration! Learn more about each one in its README.
 
 - [X] [`basic`](examples/basic): Simple examples of fundamentals like setup, function calling, handoffs, and context variables
   - running: `ruby examples/basic/agent_handoff.rb`

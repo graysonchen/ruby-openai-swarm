@@ -24,7 +24,7 @@ function_instance = OpenAISwarm::FunctionDescriptor.new(
 agent = OpenAISwarm::Agent.new(
   name: "Agent",
   instructions: method(:instructions),
-  model: "gpt-4o-mini",
+  model: ENV['SWARM_AGENT_DEFAULT_MODEL'],
   functions: [function_instance]
 )
 

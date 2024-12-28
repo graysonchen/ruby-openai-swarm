@@ -33,7 +33,7 @@ def weather_agent
   OpenAISwarm::Agent.new(
     name: "Weather Agent",
     instructions: "You are a helpful agent.",
-    model: "gpt-4o-mini",
+    model: ENV['SWARM_AGENT_DEFAULT_MODEL'],
     functions: [
       function_instance_send_email,
       function_instance_get_weather
