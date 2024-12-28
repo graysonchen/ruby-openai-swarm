@@ -27,6 +27,7 @@ build-iPhoneSimulator/
 .ruby-version
 .ruby-gemset
 /tmp
+Gemfile*.lock
 
 # rspec failure tracking
 .rspec_status
