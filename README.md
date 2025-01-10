@@ -131,11 +131,11 @@ end
 
 ### Choose the default model name
 
-export SWARM_AGENT_DEFAULT_MODEL=gpt-4o-mini
+`export SWARM_AGENT_DEFAULT_MODEL=gpt-4o-mini`
 
 or
 
-export SWARM_AGENT_DEFAULT_MODEL=deepseek-chat
+`export SWARM_AGENT_DEFAULT_MODEL=deepseek-chat`
 
 DeepSeek V3 is 1/10 price of gpt-4o-mini, so try it!
 
