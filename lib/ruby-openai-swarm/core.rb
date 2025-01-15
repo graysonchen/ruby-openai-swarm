@@ -1,4 +1,5 @@
 require 'ruby/openai'
+require 'ostruct'
 begin
   require 'pry'
 rescue LoadError
