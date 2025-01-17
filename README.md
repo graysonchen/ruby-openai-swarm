@@ -165,7 +165,7 @@ DeepSeek V3 is 1/10 price of gpt-4o-mini, so try it!
 - [X] [`triage_agent`](examples/triage_agent): Simple example of setting up a basic triage step to hand off to the right agent
   - running: `ruby examples/triage_agent/main.rb`
 - [X] [`weather_agent`](examples/weather_agent): Simple example of function calling
-  - running: `ruby examples/weather_agent/agents.rb`
+  - running: `ruby examples/weather_agent/run.rb`
 - [X] [`airline`](examples/airline): A multi-agent setup for handling different customer service requests in an airline context.
   - running: `DEBUG=1 ruby examples/airline/main.rb`
 - [ ] [`support_bot`](examples/support_bot): A customer service bot which includes a user interface agent and a help center agent with several tools
