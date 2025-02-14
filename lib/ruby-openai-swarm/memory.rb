@@ -1,20 +1,19 @@
 module OpenAISwarm
   class Memory
-    attr_reader :memories
+    attr_reader :memories,
+                :entity_store
 
-    def initialize(memory_fields: nil)
-      @memories = {}
+    def initialize(memory_fields: nil, entity_store: nil)
       @memory_fields = memory_fields
+      @entity_store = Memories::EntityStore.new(entity_store)
     end
 
-    def core_memory_save(args)
-      puts "core_memory_save"
-      args.each { |key, value| add(key, value) }
-    #   @memories[section].merge!(memory)
+    def core_memory_save(entities)
+      entity_store.add_entities(entities)
     end
 
     def prompt_content
-      return nil if memories.empty?
+      return nil if get_memories_data.nil?
 
       "You have a section of your context called [MEMORY] " \
       "that contains information relevant to your conversation [MEMORY]\n" \
@@ -33,20 +32,8 @@ module OpenAISwarm
       )
     end
 
-    def add(section, memory)
-      @memories[section] = memory
-    end
-
-    def get(section)
-      @memories[section]
-    end
-
-    def clear(section = nil)
-      @memories = {}
-    end
-
     def get_memories_data
-      memories.to_json
+      entity_store&.memories
     end
   end
 end

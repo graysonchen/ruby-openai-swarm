@@ -8,10 +8,12 @@ memory = OpenAISwarm::Memory.new({ memory_fields: memory_fields })
 memory.function
 
 def get_weather(location:)
+  puts "tool call: get_weather"
   "{'temp':67, 'unit':'F'}"
 end
 
 def get_news(category:)
+  puts "tool call: get_news"
   [
     "Tech Company A Acquires Startup B",
     "New AI Model Revolutionizes Industry",
@@ -44,10 +46,17 @@ chatbot_agent = OpenAISwarm::Agent.new(
 )
 
 puts ">>>>>>>>>>>>"
+# messages1 = [
+#   {
+#     "role": "user",
+#     "content": "Hi, I'm John. I speak Chinese and I'm in Senior Year. "
+#   }
+# ]
+
 messages1 = [
   {
     "role": "user",
-    "content": "Hi, I'm John. I speak Chinese and I'm in Senior Year."
+    "content": "Hi, I'm John. I speak Chinese and I'm in Senior Year. Get the current weather in a given location. Location MUST be a city."
   }
 ]
 
@@ -58,6 +67,7 @@ response1 = client.run(agent: chatbot_agent, messages: messages1, debug: env_deb
 puts memory.memories
 puts response1.messages.last['content']
 
+puts ""
 puts ">>>>>>>>>>>>"
 
 
