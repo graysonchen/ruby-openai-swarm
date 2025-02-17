@@ -98,4 +98,4 @@ RSpec.describe OpenAISwarm::Memory do
       memory.get_memories_data
     end
   end
-end 
+end

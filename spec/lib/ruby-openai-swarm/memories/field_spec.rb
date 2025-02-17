@@ -54,12 +54,12 @@ RSpec.describe OpenAISwarm::Memories::Field do
     it 'correctly parses a valid hash' do
       # Initialize with valid field to avoid validation error
       field = described_class.new(field: 'initial')
-      
+
       field.send(:parse_hash, {
         field: 'test_field',
         tool_call_description: 'test description'
       })
-      
+
       expect(field.field).to eq('test_field')
       expect(field.tool_call_description).to eq('test description')
     end
@@ -73,4 +73,4 @@ RSpec.describe OpenAISwarm::Memories::Field do
       expect(field.field).to eq('test_field')
     end
   end
-end 
+end

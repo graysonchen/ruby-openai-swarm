@@ -47,7 +47,7 @@ RSpec.describe OpenAISwarm::Util do
       {
         "role"=>"user",
         "content"=>"Tell me the weather in London."
-      },      
+      },
     ]
   end
 

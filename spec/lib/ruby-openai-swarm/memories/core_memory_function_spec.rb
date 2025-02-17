@@ -6,7 +6,7 @@ RSpec.describe OpenAISwarm::Memories::CoreMemoryFunction do
     context 'when no memory fields are provided' do
       it 'returns a function definition with empty properties' do
         result = described_class.definition([])
-        
+
         expect(result).to be_a(Hash)
         expect(result[:type]).to eq('function')
         expect(result[:function][:name]).to eq('core_memory_save')
@@ -26,7 +26,7 @@ RSpec.describe OpenAISwarm::Memories::CoreMemoryFunction do
 
       it 'returns a function definition with correct properties' do
         result = described_class.definition(memory_fields)
-        
+
         expect(result).to be_a(Hash)
         expect(result[:type]).to eq('function')
         expect(result[:function]).to include(
@@ -56,11 +56,11 @@ RSpec.describe OpenAISwarm::Memories::CoreMemoryFunction do
       it 'includes all fields in the properties' do
         result = described_class.definition(memory_fields)
         properties = result[:function][:parameters][:properties]
-        
+
         expect(properties.keys).to contain_exactly('name', 'age')
         expect(properties['name'][:type]).to eq('string')
         expect(properties['age'][:type]).to eq('string')
       end
     end
   end
-end 
+end
