@@ -7,7 +7,8 @@ module OpenAISwarm
                   :noisy_tool_calls,
                   :temperature,
                   :current_tool_name,
-                  :resource
+                  :resource,
+                  :memory
     # These attributes can be read and written externally. They include:
     # - name: The name of the agent.
     # - model: The model used, e.g., "gpt-4".
@@ -27,7 +28,8 @@ module OpenAISwarm
       resource: nil,
       noisy_tool_calls: [],
       strategy: {},
-      current_tool_name: nil
+      current_tool_name: nil,
+      memory: nil
     )
       @name = name
       @model = model
@@ -40,6 +42,13 @@ module OpenAISwarm
       @noisy_tool_calls = noisy_tool_calls
       @strategy = Agents::StrategyOptions.new(strategy)
       @current_tool_name = current_tool_name.nil? ? nil : current_tool_name.to_s
+      @memory = memory
+    end
+
+    def functions
+      return @functions if memory&.function.nil?
+
+      @functions.push(memory.function)
     end
   end
 end

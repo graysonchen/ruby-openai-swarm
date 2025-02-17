@@ -15,11 +15,28 @@ module OpenAISwarm
       @logger = OpenAISwarm::Logger.instance.logger
     end
 
+    # TODO(Grayson)
+    # def create_agent(name:, model:, instructions:, **options)
+    #   memory = Memory.new(@memory_fields)
+    #   Agent.new(
+    #     name: name,
+    #     model: model,
+    #     instructions: instructions,
+    #     memory: memory,
+    #     functions: functions,
+    #     **options
+    #   )
+    # end
+
     def get_chat_completion(agent_tracker, history, context_variables, model_override, stream, debug)
       agent = agent_tracker.current_agent
       context_variables = context_variables.dup
       instructions = agent.instructions.respond_to?(:call) ? agent.instructions.call(context_variables) : agent.instructions
-      messages = [{ role: 'system', content: instructions }] + history
+
+      # Build a message history, including memories
+      messages = [{ role: 'system', content: instructions }]
+      messages << { role: 'system', content: agent.memory.prompt_content } unless agent&.memory&.prompt_content.nil?
+      messages += history
 
       # Util.debug_print(debug, "Getting chat completion for...:", messages)
 
@@ -66,9 +83,10 @@ module OpenAISwarm
 
       Util.debug_print(debug, "API Response:", response)
       response
-    rescue OpenAI::Error => e
-      log_message(:error, "OpenAI API Error: #{e.message}")
-      Util.debug_print(true, "OpenAI API Error:", e.message)
+    rescue OpenAI::Error, Faraday::BadRequestError => e
+      error_message = (e.response || {}).dig(:body) || e.inspect
+      log_message(:error, "OpenAI API Error: #{error_message}")
+      Util.debug_print(true, "OpenAI API Error:", error_message)
       raise
     end
 
@@ -182,11 +200,11 @@ module OpenAISwarm
           debug
         )
 
-        message = completion.dig('choices', 0, 'message')
+        message = completion.dig('choices', 0, 'message') || {}
         Util.debug_print(debug, "Received completion:", message)
         log_message(:info, "Received completion:", message)
 
-        message['sender'] = active_agent.name
+        message['sender'] = active_agent&.name
         history << message
 
         if !message['tool_calls'] || !execute_tools
