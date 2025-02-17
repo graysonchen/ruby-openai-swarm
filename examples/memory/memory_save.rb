@@ -3,7 +3,7 @@ require_relative "../bootstrap"
 client = OpenAISwarm.new
 model = ENV['SWARM_AGENT_DEFAULT_MODEL'] || "gpt-4o-mini"
 
-memory = OpenAISwarm::Memory.new({ memory_fields: ["language", "grade", "name", "sex"] })
+memory = OpenAISwarm::Memory.new(memory_fields: ["language", "grade", "name", "sex"])
 memory.function
 
 def get_weather(location:)
@@ -69,6 +69,3 @@ puts "messages: #{messages2}"
 response2 = client.run(agent: chatbot_agent, messages: messages2, debug: env_debug)
 
 puts response2.messages.last['content']
-
-# memory.entity_store.data
-# binding.pry
