@@ -88,9 +88,10 @@ module OpenAISwarm
 
       Util.debug_print(debug, "API Response:", response)
       response
-    rescue OpenAI::Error => e
-      log_message(:error, "OpenAI API Error: #{e.message}")
-      Util.debug_print(true, "OpenAI API Error:", e.message)
+    rescue OpenAI::Error, Faraday::BadRequestError => e
+      error_message = (e.response || {}).dig(:body) || e.inspect
+      log_message(:error, "OpenAI API Error: #{error_message}")
+      Util.debug_print(true, "OpenAI API Error:", error_message)
       raise
     end
 
