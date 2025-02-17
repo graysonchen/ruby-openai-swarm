@@ -4,11 +4,10 @@ module OpenAISwarm
       def self.definition(memory_fields = [])
         properties = {}
 
-        memory_fields.each do |field|
-          properties[field] = {
-            type: "string",
-            description: "The #{field} to remember"
-          }
+        memory_fields.each do |memory_field|
+          field = memory_field.field
+          description = "The #{field} to remember." + memory_field&.tool_call_description.to_s
+          properties[field] = { type: "string", description: description }
         end
 
         {

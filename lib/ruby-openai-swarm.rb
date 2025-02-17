@@ -14,6 +14,7 @@ require 'ruby-openai-swarm/logger'
 require 'ruby-openai-swarm/memory'
 require 'ruby-openai-swarm/memories/entity_store'
 require 'ruby-openai-swarm/memories/core_memory_function'
+require 'ruby-openai-swarm/memories/field'
 
 
 module OpenAISwarm
