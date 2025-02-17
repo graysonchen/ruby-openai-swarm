@@ -10,28 +10,23 @@ module OpenAISwarm
     include Util
     CTX_VARS_NAME = 'context_variables'
 
-    def initialize(client = nil, memory_fields = [])
+    def initialize(client = nil)
       @client = client || OpenAI::Client.new
       @logger = OpenAISwarm::Logger.instance.logger
-      # @memory_fields = memory_fields
     end
 
-    def create_agent(name:, model:, instructions:, **options)
-      memory = Memory.new(@memory_fields)
-      memory_function = Memories::CoreMemoryFunction.new(agent, @memory_fields)
-
-      functions = options[:functions] || []
-      functions << memory_function
-
-      Agent.new(
-        name: name,
-        model: model,
-        instructions: instructions,
-        memory: memory,
-        functions: functions,
-        **options
-      )
-    end
+    # TODO(Grayson)
+    # def create_agent(name:, model:, instructions:, **options)
+    #   memory = Memory.new(@memory_fields)
+    #   Agent.new(
+    #     name: name,
+    #     model: model,
+    #     instructions: instructions,
+    #     memory: memory,
+    #     functions: functions,
+    #     **options
+    #   )
+    # end
 
     def get_chat_completion(agent_tracker, history, context_variables, model_override, stream, debug)
       agent = agent_tracker.current_agent

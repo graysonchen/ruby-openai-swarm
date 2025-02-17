@@ -15,8 +15,10 @@ module OpenAISwarm
     def prompt_content
       return nil if get_memories_data.nil?
 
+      fields = @memory_fields.join(", ")
       "You have a section of your context called [MEMORY] " \
-      "that contains information relevant to your conversation [MEMORY]\n" \
+      "that contains the following information: #{fields}. " \
+      "Here are the relevant details: [MEMORY]\n" \
       "#{get_memories_data}"
     end
 
