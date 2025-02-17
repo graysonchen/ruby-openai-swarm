@@ -13,7 +13,7 @@ require 'ruby-openai-swarm/configuration'
 require 'ruby-openai-swarm/logger'
 require 'ruby-openai-swarm/memory'
 require 'ruby-openai-swarm/memories/entity_store'
-require 'ruby-openai-swarm/functions/core_memory_function'
+require 'ruby-openai-swarm/memories/core_memory_function'
 
 
 module OpenAISwarm

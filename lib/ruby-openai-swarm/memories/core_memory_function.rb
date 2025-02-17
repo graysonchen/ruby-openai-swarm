@@ -1,5 +1,5 @@
 module OpenAISwarm
-  module Functions
+  module Memories
     class CoreMemoryFunction
       def self.definition(memory_fields = [])
         properties = {
@@ -43,4 +43,4 @@ module OpenAISwarm
       end
     end
   end
-end 
+end

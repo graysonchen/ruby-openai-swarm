@@ -18,7 +18,7 @@ module OpenAISwarm
 
     def create_agent(name:, model:, instructions:, **options)
       memory = Memory.new(@memory_fields)
-      memory_function = Functions::CoreMemoryFunction.new(agent, @memory_fields)
+      memory_function = Memories::CoreMemoryFunction.new(agent, @memory_fields)
 
       functions = options[:functions] || []
       functions << memory_function

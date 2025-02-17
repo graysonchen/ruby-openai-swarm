@@ -22,14 +22,16 @@ module OpenAISwarm
 
     def function
       return nil if @memory_fields.empty?
-      core_memory_save_metadata = Functions::CoreMemoryFunction.definition(@memory_fields)
-      description = core_memory_save_metadata[:function][:description]
-      parameters = core_memory_save_metadata[:function][:parameters]
+
       OpenAISwarm::FunctionDescriptor.new(
         target_method: method(:core_memory_save),
-        description: description,
-        parameters: parameters
+        description: core_memory_save_metadata[:function][:description],
+        parameters: core_memory_save_metadata[:function][:parameters]
       )
+    end
+
+    def core_memory_save_metadata
+      @core_memory_save_metadata ||= Memories::CoreMemoryFunction.definition(@memory_fields)
     end
 
     def get_memories_data

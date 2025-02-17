@@ -2,7 +2,6 @@ require_relative "../bootstrap"
 
 client = OpenAISwarm.new
 model = ENV['SWARM_AGENT_DEFAULT_MODEL'] || "gpt-4o-mini"
-# model = ENV['SWARM_AGENT_DEFAULT_MODEL'] || "gpt-4o"
 memory_fields = ["language", "grade", "name", "sex"]
 memory = OpenAISwarm::Memory.new({ memory_fields: memory_fields })
 memory.function
@@ -46,12 +45,6 @@ chatbot_agent = OpenAISwarm::Agent.new(
 )
 
 puts ">>>>>>>>>>>>"
-# messages1 = [
-#   {
-#     "role": "user",
-#     "content": "Hi, I'm John. I speak Chinese and I'm in Senior Year. "
-#   }
-# ]
 
 messages1 = [
   {
@@ -80,5 +73,3 @@ puts "messages: #{messages2}"
 response2 = client.run(agent: chatbot_agent, messages: messages2, debug: env_debug)
 
 puts response2.messages.last['content']
-
-# binding.pry
