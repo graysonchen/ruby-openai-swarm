@@ -3,12 +3,12 @@ require_relative 'lib/ruby-openai-swarm/version'
 Gem::Specification.new do |spec|
   spec.name          = "ruby-openai-swarm"
   spec.version       = OpenAISwarm::VERSION
-  spec.authors       = ["Grayson"]
+  spec.authors       = ["Grayson Chen"]
   spec.email         = ["cgg5207@gmail.com"]
 
   spec.summary       = " A Ruby implementation of OpenAI function calling swarm"
   spec.description   = "Allows for creating swarms of AI agents that can call functions and interact with each other"
-  spec.homepage      = "https://github.com/grayson/ruby-openai-swarm"
+  spec.homepage      = "https://github.com/graysonchen/ruby-openai-swarm"
   spec.license       = "MIT"
   spec.required_ruby_version = Gem::Requirement.new(">= 2.6.0")
 
