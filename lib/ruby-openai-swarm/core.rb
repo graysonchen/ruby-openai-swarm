@@ -28,7 +28,7 @@ module OpenAISwarm
     #   )
     # end
 
-    def get_chat_completion(agent_tracker, history, context_variables, model_override, stream, debug)
+    def get_chat_completion(agent_tracker, history, context_variables, model_override, stream, debug, metadata = nil)
       agent = agent_tracker.current_agent
       context_variables = context_variables.dup
       instructions = agent.instructions.respond_to?(:call) ? agent.instructions.call(context_variables) : agent.instructions
@@ -55,6 +55,9 @@ module OpenAISwarm
         messages: cleaned_messages,
         tools: Util.request_tools_excluded(tools, agent_tracker.tracking_agents_tool_name, agent.strategy.prevent_agent_reentry),
       }
+
+      # Add metadata if provided
+      create_params[:metadata] = metadata if metadata
 
       # TODO: https://platform.openai.com/docs/guides/function-calling/how-do-functions-differ-from-tools
       # create_params[:functions] = tools unless tools.empty?
@@ -168,7 +171,7 @@ module OpenAISwarm
       partial_response
     end
 
-    def run(agent:, messages:, context_variables: {}, model_override: nil, stream: false, debug: false, max_turns: Float::INFINITY, execute_tools: true)
+    def run(agent:, messages:, context_variables: {}, model_override: nil, stream: false, debug: false, max_turns: Float::INFINITY, execute_tools: true, metadata: nil)
       agent_tracker = OpenAISwarm::Agents::ChangeTracker.new(agent)
       if stream
         return run_and_stream(
@@ -178,7 +181,8 @@ module OpenAISwarm
           model_override: model_override,
           debug: debug,
           max_turns: max_turns,
-          execute_tools: execute_tools
+          execute_tools: execute_tools,
+          metadata: metadata
         )
       end
 
@@ -197,7 +201,8 @@ module OpenAISwarm
           context_variables,
           model_override,
           stream,
-          debug
+          debug,
+          metadata
         )
 
         message = completion.dig('choices', 0, 'message') || {}
@@ -237,7 +242,7 @@ module OpenAISwarm
     end
 
     # TODO(Grayson): a lot of copied code here that will be refactored
-    def run_and_stream(agent:, messages:, context_variables: {}, model_override: nil, debug: false, max_turns: Float::INFINITY, execute_tools: true)
+    def run_and_stream(agent:, messages:, context_variables: {}, model_override: nil, debug: false, max_turns: Float::INFINITY, execute_tools: true, metadata: nil)
       agent_tracker = OpenAISwarm::Agents::ChangeTracker.new(agent)
       active_agent = agent
       context_variables = context_variables.dup
@@ -255,7 +260,8 @@ module OpenAISwarm
           context_variables,
           model_override,
           true, # stream
-          debug
+          debug,
+          metadata
         )
 
         yield({ delim: "start" }) if block_given?
