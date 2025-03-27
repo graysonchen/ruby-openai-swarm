@@ -57,6 +57,8 @@ module OpenAISwarm
       }
 
       # Add metadata if provided
+      # Add support for LiteLLM observability with Langfuse
+      # See: https://docs.litellm.ai/docs/observability/langfuse_integration      
       create_params[:metadata] = metadata if metadata
 
       # TODO: https://platform.openai.com/docs/guides/function-calling/how-do-functions-differ-from-tools
