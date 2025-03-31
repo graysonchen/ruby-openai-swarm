@@ -23,6 +23,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
   spec.add_dependency "ruby-openai", ">= 7.3", "< 9.0"
   spec.add_dependency "ostruct"
+  spec.add_dependency "activesupport"
   spec.add_development_dependency "rspec", "~> 3.0"
   spec.add_development_dependency "rake", "~> 13.0"
   spec.add_development_dependency "pry"
