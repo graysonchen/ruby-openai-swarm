@@ -48,6 +48,25 @@ RSpec.describe OpenAISwarm::Core do
       )
     end
 
+    it 'transforms var_agent_name in metadata to actual agent name' do
+      core = described_class.new(client)
+      metadata_with_var = { user_id: 123, agent_name: :agent_name }
+      
+      expect(client).to receive(:chat) do |params|
+        expect(params[:parameters][:metadata]).to eq({
+          user_id: 123,
+          agent_name: "TestAgent"
+        })
+        chat_response
+      end
+
+      core.run(
+        agent: agent,
+        messages: messages,
+        metadata: metadata_with_var
+      )
+    end
+
     it 'works without metadata' do
       core = described_class.new(client)
       

@@ -60,7 +60,7 @@ module OpenAISwarm
       # Add support for LiteLLM observability with Langfuse
       # See: https://docs.litellm.ai/docs/observability/langfuse_integration
       if metadata && metadata.is_a?(Hash)
-        metadata_hash = metadata.deep_transform_values { |val| val.to_s.to_sym == :var_agent_name ? agent&.name : val }
+        metadata_hash = metadata.deep_transform_values { |val| val.to_s.to_sym == :agent_name ? agent&.name : val }
         create_params[:metadata] = metadata_hash
       end
 
