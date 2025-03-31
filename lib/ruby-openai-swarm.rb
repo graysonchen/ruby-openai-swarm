@@ -15,7 +15,7 @@ require 'ruby-openai-swarm/memory'
 require 'ruby-openai-swarm/memories/entity_store'
 require 'ruby-openai-swarm/memories/core_memory_function'
 require 'ruby-openai-swarm/memories/field'
-
+require 'active_support/core_ext/hash/deep_transform_values'
 
 module OpenAISwarm
   class Error < StandardError;
